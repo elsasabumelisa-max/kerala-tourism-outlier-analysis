@@ -1,6 +1,6 @@
 # Kerala Tourism Outlier Analysis & Anomaly Mining Report
 
-**Generated:** 2026-10-27 21:47:51  
+**Generated:** 2026-10-27 22:18:55  
 **Scope:** 14 Districts of Kerala | Temporal Coverage: 2017 - 2024  
 **Total Records Analyzed:** 1,344  
 **Consensus Anomalies Flagged:** 66 (4.91% of total records)  
@@ -27,7 +27,7 @@ This data mining initiative applies multi-paradigm anomaly detection (Statistica
 | OneClassSVM      |      0.7308 |   0.25   |     0.3725 |              0.6156 |              78 |
 | LOF              |      0.6543 |   0.2325 |     0.343  |              0.6037 |              81 |
 | Ensemble_Outlier |      0.7273 |   0.2105 |     0.3265 |              0.5972 |              66 |
-| IsolationForest  |      0.5432 |   0.193  |     0.2848 |              0.5799 |              81 |
+| IsolationForest  |      0.5556 |   0.1974 |     0.2913 |              0.5826 |              81 |
 | IQR_District     |      1      |   0.0526 |     0.1    |              0.5263 |              12 |
 | ModZScore        |      0.3846 |   0.0219 |     0.0415 |              0.5074 |              13 |
 | ZScore           |      0.5714 |   0.0175 |     0.034  |              0.5074 |               7 |
@@ -42,14 +42,14 @@ The table below summarizes anomaly frequency and character per district:
 |:-------------------|----------------:|---------------------:|-------------------:|--------------:|--------------:|-----------------------:|
 | Ernakulam          |              96 |                   17 |              17.71 |             4 |             3 |                28906.7 |
 | Thrissur           |              96 |                    9 |               9.38 |             2 |             6 |                57585.3 |
-| Thiruvananthapuram |              96 |                    9 |               9.38 |             5 |             0 |               -62404.2 |
+| Thiruvananthapuram |              96 |                    8 |               8.33 |             4 |             0 |               -53326.6 |
 | Wayanad            |              96 |                    6 |               6.25 |             5 |             1 |               -52703.5 |
 | Idukki             |              96 |                    6 |               6.25 |             3 |             1 |               -58740   |
-| Alappuzha          |              96 |                    3 |               3.12 |             1 |             2 |                68382.3 |
+| Kasaragod          |              96 |                    3 |               3.12 |             2 |             0 |               -31094   |
+| Kannur             |              96 |                    3 |               3.12 |             3 |             0 |               -48838   |
 | Kollam             |              96 |                    3 |               3.12 |             1 |             2 |                42541   |
 | Kottayam           |              96 |                    3 |               3.12 |             1 |             0 |               -29810.8 |
-| Kasaragod          |              96 |                    2 |               2.08 |             1 |             0 |               -29763   |
-| Kannur             |              96 |                    2 |               2.08 |             2 |             0 |               -49764.5 |
+| Alappuzha          |              96 |                    2 |               2.08 |             0 |             2 |               143204   |
 | Kozhikode          |              96 |                    2 |               2.08 |             0 |             0 |               -32312   |
 | Pathanamthitta     |              96 |                    2 |               2.08 |             2 |             0 |               -29404.5 |
 | Palakkad           |              96 |                    1 |               1.04 |             1 |             0 |               -41850.5 |
@@ -63,12 +63,12 @@ Comparative operational parameters illustrating the scale of deviation in touris
 
 | Feature              |   Inlier_Mean |   Inlier_Std |   Outlier_Mean |   Outlier_Std |   Mean_Shift_Pct |
 |:---------------------|--------------:|-------------:|---------------:|--------------:|-----------------:|
-| Domestic_Tourists    |      64012.2  |     43703.1  |       95964.3  |     101391    |            49.92 |
-| Foreign_Tourists     |       5851.19 |      4307.83 |        7851.27 |      10084.3  |            34.18 |
-| Total_Tourists       |      69863.4  |     47727.2  |      103816    |     110753    |            48.6  |
-| Hotel_Occupancy_Rate |         52.64 |        18.06 |          43.27 |         31.41 |           -17.79 |
-| Tourism_Revenue_Cr   |         77.54 |        55.53 |         114.59 |        123.85 |            47.78 |
-| Average_Stay_Days    |          2.49 |         0.55 |           2.48 |          0.5  |            -0.57 |
+| Domestic_Tourists    |      64020.7  |     43693.4  |       95800.6  |     101524    |            49.64 |
+| Foreign_Tourists     |       5851.19 |      4307.82 |        7851.2  |      10084.4  |            34.18 |
+| Total_Tourists       |      69871.9  |     47717.3  |      103652    |     110887    |            48.35 |
+| Hotel_Occupancy_Rate |         52.64 |        18.06 |          43.28 |         31.38 |           -17.78 |
+| Tourism_Revenue_Cr   |         77.55 |        55.52 |         114.46 |        123.95 |            47.6  |
+| Average_Stay_Days    |          2.49 |         0.55 |           2.51 |          0.48 |             0.69 |
 
 ---
 
