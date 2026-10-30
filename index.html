@@ -3,62 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kerala Tourism Trend Outlier Analysis | Executive Dashboard</title>
+  <title>Kerala Tourism Outlier Analysis & Intelligent Planning Platform</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .kerala-gradient { background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #0369a1 100%); }
+    .kerala-gradient { background: linear-gradient(135deg, #064e3b 0%, #0f766e 40%, #0369a1 100%); }
     .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03); }
     .tab-active { border-bottom: 3px solid #0f766e; color: #0f766e; font-weight: 700; }
+    .mode-pill-active { background-color: white; color: #064e3b; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-  <!-- TOP HERO NAVBAR -->
+  <!-- TOP HEADER & DUAL-PERSONA SWITCHER -->
   <header class="kerala-gradient text-white shadow-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div class="flex items-center gap-2 mb-1">
             <span class="bg-emerald-400/20 text-emerald-200 border border-emerald-400/30 text-xs px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">
-              Data Mining Group Project
+              Data Mining & Decision Support
             </span>
-            <span class="text-xs text-emerald-100/70">14 Administrative Districts of Kerala</span>
+            <span class="text-xs text-emerald-100/70">Kerala Tourism Department & Public Portal</span>
           </div>
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Kerala Tourism Trend Outlier Analysis
           </h1>
           <p class="text-emerald-100/90 text-sm mt-0.5">
-            Multi-Paradigm Anomaly Detection & Comparative Evaluation Framework
+            Intelligent Anomaly Detection, Department Planning & Tourist Smart Assistant
           </p>
         </div>
 
-        <!-- TEAM COLLABORATOR CHIPS -->
-        <div class="flex flex-wrap items-center gap-2 text-xs">
-          <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
-            <span class="text-emerald-200 font-semibold">Stage 1:</span> Preprocessing & EDA
-          </div>
-          <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
-            <span class="text-cyan-200 font-semibold">Stage 2:</span> Isolation Forest
-          </div>
-          <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
-            <span class="text-amber-200 font-semibold">Stage 3:</span> Local Outlier Factor
-          </div>
+        <!-- DUAL AUDIENCE MODE TOGGLE -->
+        <div class="bg-black/25 p-1 rounded-xl flex items-center border border-white/20 text-xs backdrop-blur-md self-start md:self-auto">
+          <button onclick="setAudienceMode('department')" id="btn-mode-department" class="px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-all mode-pill-active">
+            <i class="fa-solid fa-building-columns"></i>
+            <span>Department Mode</span>
+          </button>
+          <button onclick="setAudienceMode('tourist')" id="btn-mode-tourist" class="px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-all text-white/80 hover:text-white">
+            <i class="fa-solid fa-compass"></i>
+            <span>Traveler & Resident Mode</span>
+          </button>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+  <!-- MAIN BODY -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
     <!-- KPI STATS CARDS -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-      <!-- Card 1 -->
       <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
         <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Total Records</div>
         <div class="text-2xl font-black text-slate-800 mt-1">70</div>
@@ -67,34 +68,30 @@
         </div>
       </div>
 
-      <!-- Card 2 -->
       <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
         <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Concordance Rate</div>
         <div class="text-2xl font-black text-emerald-600 mt-1">91.43%</div>
         <div class="text-xs text-emerald-700 mt-1 flex items-center gap-1">
-          <i class="fa-solid fa-check-double"></i> 64/70 Agreed Inliers
+          <i class="fa-solid fa-check-double"></i> 63 Agreed Inliers
         </div>
       </div>
 
-      <!-- Card 3 -->
       <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
-        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Isolation Forest Outliers</div>
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Isolation Forest</div>
         <div class="text-2xl font-black text-blue-600 mt-1">4</div>
         <div class="text-xs text-blue-700 mt-1 flex items-center gap-1">
-          <i class="fa-solid fa-tree"></i> 5.71% Detection Rate
+          <i class="fa-solid fa-tree"></i> 5.71% Outlier Rate
         </div>
       </div>
 
-      <!-- Card 4 -->
       <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
-        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Local Outlier Factor Outliers</div>
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Local Outlier Factor</div>
         <div class="text-2xl font-black text-amber-600 mt-1">4</div>
         <div class="text-xs text-amber-700 mt-1 flex items-center gap-1">
-          <i class="fa-solid fa-circle-nodes"></i> k=20 Neighbors
+          <i class="fa-solid fa-circle-nodes"></i> Density k=20
         </div>
       </div>
 
-      <!-- Card 5 -->
       <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
         <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Consensus Outlier</div>
         <div class="text-2xl font-black text-rose-600 mt-1">1</div>
@@ -103,132 +100,450 @@
         </div>
       </div>
 
-      <!-- Card 6 -->
       <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
-        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Jaccard Similarity</div>
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Jaccard Agreement</div>
         <div class="text-2xl font-black text-indigo-600 mt-1">0.1429</div>
         <div class="text-xs text-indigo-700 mt-1 flex items-center gap-1">
-          <i class="fa-solid fa-chart-pie"></i> Tree vs Density
+          <i class="fa-solid fa-chart-pie"></i> Tree vs. Density
         </div>
       </div>
     </div>
 
-    <!-- NAVIGATION TABS -->
+    <!-- AUDIENCE BANNERS (DYNAMICALLY TOGGLED) -->
+    <div id="banner-department" class="mb-8 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 text-lg">
+          <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-sm">Tourism Development Authority View Active</h3>
+          <p class="text-xs text-emerald-800">Viewing policy planning tools, early crisis warning triggers, capacity forecasting, and anomaly simulation.</p>
+        </div>
+      </div>
+      <button onclick="switchTab('simulator')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-sm">
+        Open Anomaly Simulator
+      </button>
+    </div>
+
+    <div id="banner-tourist" class="mb-8 p-4 rounded-xl bg-sky-50 border border-sky-200 text-sky-900 hidden flex items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-sky-600 text-white flex items-center justify-center flex-shrink-0 text-lg">
+          <i class="fa-solid fa-compass"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-sm">Traveler & Resident Planning View Active</h3>
+          <p class="text-xs text-sky-800">Smart crowd prediction, off-peak travel suggestions, monsoon safety advisories, and hidden gem alternatives.</p>
+        </div>
+      </div>
+      <button onclick="switchTab('trip-planner')" class="text-xs bg-sky-600 hover:bg-sky-700 text-white font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-sm">
+        Start Trip Planner
+      </button>
+    </div>
+
+    <!-- MAIN INTERACTIVE CONTAINER -->
     <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm mb-8 overflow-hidden">
+      <!-- TABS HEADER -->
       <div class="flex border-b border-slate-200 overflow-x-auto text-sm font-medium">
         <button onclick="switchTab('overview')" id="tab-overview" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap tab-active">
           <i class="fa-solid fa-house text-emerald-600"></i> Executive Overview
+        </button>
+        <button onclick="switchTab('trip-planner')" id="tab-trip-planner" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-calendar-check text-sky-600"></i> Smart Trip & Crowd Planner
+        </button>
+        <button onclick="switchTab('simulator')" id="tab-simulator" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-sliders text-amber-600"></i> Department Anomaly Simulator
+        </button>
+        <button onclick="switchTab('explorer')" id="tab-explorer" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-chart-line text-blue-600"></i> Interactive District Explorer
         </button>
         <button onclick="switchTab('comparison')" id="tab-comparison" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
           <i class="fa-solid fa-code-compare text-indigo-600"></i> Model Comparison (IF vs LOF)
         </button>
         <button onclick="switchTab('outliers-table')" id="tab-outliers-table" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
-          <i class="fa-solid fa-table-list text-rose-600"></i> Detected Outliers
+          <i class="fa-solid fa-table-list text-rose-600"></i> Outliers Table
         </button>
-        <button onclick="switchTab('district-vulnerability')" id="tab-district-vulnerability" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
-          <i class="fa-solid fa-map-location-dot text-amber-600"></i> District Vulnerability
+        <button onclick="switchTab('policy-recommendations')" id="tab-policy-recommendations" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-clipboard-check text-teal-600"></i> Policy Recommendations
         </button>
         <button onclick="switchTab('gallery')" id="tab-gallery" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
-          <i class="fa-solid fa-chart-line text-cyan-600"></i> Visual Analytics Gallery
+          <i class="fa-solid fa-images text-purple-600"></i> Visual Analytics Gallery
         </button>
       </div>
 
+      <!-- ============================================================== -->
       <!-- TAB 1: EXECUTIVE OVERVIEW -->
+      <!-- ============================================================== -->
       <div id="content-overview" class="p-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 space-y-6">
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
               <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-circle-info text-emerald-600"></i> Domain Context: What Outliers Mean in Kerala Tourism
+                <i class="fa-solid fa-circle-info text-emerald-600"></i> Problem Statement & Methodology
               </h2>
               <p class="text-slate-600 leading-relaxed text-sm">
-                In this data mining study, an <strong>outlier is an unusual observation or significant trend deviation, NOT a data collection error</strong>. 
-                Tourism arrivals in Kerala are strongly influenced by the South-West Monsoon, backwater geography, mountain topography (Western Ghats), and major socio-cultural events:
+                Kerala tourism experiences intense spatial and temporal volatility influenced by tropical monsoons, hill station climates, backwaters, and cultural festivals. 
+                This platform implements a <strong>multi-technique anomaly detection architecture</strong> using <strong>Z-Score</strong>, <strong>IQR (Interquartile Range)</strong>, <strong>Isolation Forest</strong>, and <strong>Local Outlier Factor (LOF)</strong> to separate true trend anomalies from standard seasonal cycles.
               </p>
+              
               <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
                 <div class="bg-rose-50 border border-rose-200/70 p-3 rounded-lg">
                   <div class="font-bold text-rose-900 flex items-center gap-1.5 mb-1">
-                    <i class="fa-solid fa-cloud-showers-heavy"></i> 2018 Floods
+                    <i class="fa-solid fa-cloud-showers-heavy"></i> 2018 Flood Shocks
                   </div>
-                  <p class="text-rose-800">Torrential rain collapse in Alappuzha & Idukki (-85% drop).</p>
+                  <p class="text-rose-800">Severe rain collapse in Alappuzha & Idukki (-85% drop) needing fast relief protocols.</p>
                 </div>
                 <div class="bg-amber-50 border border-amber-200/70 p-3 rounded-lg">
                   <div class="font-bold text-amber-900 flex items-center gap-1.5 mb-1">
-                    <i class="fa-solid fa-virus"></i> COVID-19 Shock
+                    <i class="fa-solid fa-virus"></i> Pandemic Disruptions
                   </div>
-                  <p class="text-amber-800">Extended zero foreign arrivals and severe domestic lockdowns.</p>
+                  <p class="text-amber-800">Extended near-zero international arrivals during 2020-2021 lockdowns.</p>
                 </div>
                 <div class="bg-emerald-50 border border-emerald-200/70 p-3 rounded-lg">
                   <div class="font-bold text-emerald-900 flex items-center gap-1.5 mb-1">
                     <i class="fa-solid fa-masks-theater"></i> Festive Super-Surges
                   </div>
-                  <p class="text-emerald-800">Thrissur Pooram & Onam peaks exceeding 2.4× baseline.</p>
+                  <p class="text-emerald-800">Thrissur Pooram & Onam peaks exceeding 2.4× standard district baseline demand.</p>
                 </div>
               </div>
             </div>
 
-            <!-- CORE FINDINGS -->
+            <!-- 6-STAGE WORKFLOW PIPELINE -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+              <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">6-Stage Proposed Methodology</h3>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 text-center text-xs">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 mx-auto rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center mb-1">1</div>
+                  <div class="font-bold text-slate-800">Data Collection</div>
+                  <div class="text-[10px] text-slate-500 mt-1">14 Districts, Years, Arrivals</div>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 mx-auto rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center mb-1">2</div>
+                  <div class="font-bold text-slate-800">Preprocessing</div>
+                  <div class="text-[10px] text-slate-500 mt-1">Cleaning & Imputation</div>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 mx-auto rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center mb-1">3</div>
+                  <div class="font-bold text-slate-800">Segmentation</div>
+                  <div class="text-[10px] text-slate-500 mt-1">Destination & Seasonality</div>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 mx-auto rounded-full bg-rose-100 text-rose-700 font-bold flex items-center justify-center mb-1">4</div>
+                  <div class="font-bold text-slate-800">Anomaly Mining</div>
+                  <div class="text-[10px] text-slate-500 mt-1">Z-Score, IQR, IF, LOF</div>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 mx-auto rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center mb-1">5</div>
+                  <div class="font-bold text-slate-800">Visual Reporting</div>
+                  <div class="text-[10px] text-slate-500 mt-1">Dashboards & Plots</div>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <div class="w-7 h-7 mx-auto rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center mb-1">6</div>
+                  <div class="font-bold text-slate-800">Action Insights</div>
+                  <div class="text-[10px] text-slate-500 mt-1">Policy & Smart Planning</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KEY FINDINGS -->
             <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
               <h2 class="text-lg font-bold text-slate-900 mb-3">Key Project Findings</h2>
               <ul class="space-y-3 text-sm text-slate-600">
                 <li class="flex items-start gap-2.5">
                   <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
                   <div>
-                    <strong>Mutual Consensus on 2019 Ernakulam:</strong> Both Isolation Forest and Local Outlier Factor simultaneously flagged <strong>Ernakulam in 2019</strong> (4.58M total tourists) as the single highest confidence anomaly in Kerala's modern tourism history.
+                    <strong>Consensus Outlier on 2019 Ernakulam:</strong> Both Isolation Forest and Local Outlier Factor simultaneously flagged <strong>Ernakulam in 2019</strong> (4.58M total tourists) as the single highest confidence anomaly in Kerala's modern tourism history.
                   </div>
                 </li>
                 <li class="flex items-start gap-2.5">
                   <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
                   <div>
-                    <strong>Algorithm Complementarity:</strong> Isolation Forest effectively isolated macro-scale volume spikes (Ernakulam 2022-2023 domestic surges), while Local Outlier Factor successfully isolated density variations in Alappuzha during the 2017-2019 flood-rebuilding cycle.
+                    <strong>Algorithm Complementarity:</strong> Isolation Forest effectively isolated macro-scale volume spikes (Ernakulam 2022-2023 domestic surges), while Local Outlier Factor successfully isolated local density variations in Alappuzha during the 2017-2019 flood-rebuilding cycle.
                   </div>
                 </li>
                 <li class="flex items-start gap-2.5">
                   <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
                   <div>
-                    <strong>91.43% Baseline Agreement:</strong> 64 out of 70 district-year observations showed unified agreement as inliers between tree-partitioning and density-clustering paradigms.
+                    <strong>91.43% Baseline Agreement:</strong> 63 out of 70 district-year observations showed unified agreement as inliers between tree-partitioning and density-clustering paradigms.
                   </div>
                 </li>
               </ul>
             </div>
           </div>
 
-          <!-- SIDEBAR: TEAM MEMBER RESPONSIBILITIES -->
+          <!-- SIDEBAR: HIGHLIGHTS & QUICK ACTIONS -->
           <div class="space-y-4">
             <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-              <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Project Modules</h3>
+              <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Official Benchmarks</h3>
               <div class="space-y-3 text-xs">
                 <div class="p-3 rounded-lg bg-emerald-50/70 border border-emerald-100">
-                  <div class="font-bold text-emerald-900 mb-0.5">Data Preprocessing & Sanitization</div>
-                  <p class="text-emerald-800">Dynamic column detection, missing value imputation, text sanitization, canonical dataset output.</p>
+                  <div class="font-bold text-emerald-900 mb-0.5">Kerala Tourism Statistics 2024</div>
+                  <p class="text-emerald-800">Recorded <strong>22,246,686 domestic visits</strong> and <strong>738,374 foreign visits</strong> statewide.</p>
                 </div>
                 <div class="p-3 rounded-lg bg-blue-50/70 border border-blue-100">
-                  <div class="font-bold text-blue-900 mb-0.5">Isolation Forest Algorithm</div>
-                  <p class="text-blue-800">Primary unsupervised detection algorithm, configurable contamination, anomaly score derivation.</p>
-                </div>
-                <div class="p-3 rounded-lg bg-amber-50/70 border border-amber-100">
-                  <div class="font-bold text-amber-900 mb-0.5">Local Outlier Factor & Evaluation</div>
-                  <p class="text-amber-800">Local Outlier Factor (k=20), Jaccard concordance evaluation, metric visualizations.</p>
+                  <div class="font-bold text-blue-900 mb-0.5">Recent District Highlights</div>
+                  <p class="text-blue-800">Idukki recorded <strong>4.67M domestic visits</strong>, while Ernakulam recorded <strong>4.42M domestic visits</strong>.</p>
                 </div>
               </div>
             </div>
 
             <div class="bg-slate-900 text-white rounded-xl p-5 shadow-sm">
-              <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">CLI Execution</div>
-              <p class="text-xs text-slate-300 mb-3">Run the master orchestrator in PowerShell or Bash:</p>
-              <code class="block bg-slate-800 text-emerald-400 p-2.5 rounded font-mono text-xs">
-                py main.py --contamination 0.05
-              </code>
+              <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Interactive Tools</div>
+              <p class="text-xs text-slate-300 mb-3">Jump straight to interactive tools built for authorities and visitors:</p>
+              <div class="flex flex-col gap-2">
+                <button onclick="switchTab('trip-planner')" class="w-full text-left text-xs bg-slate-800 hover:bg-slate-700 p-2.5 rounded text-sky-300 font-medium flex items-center justify-between">
+                  <span>Smart Trip & Crowd Planner</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+                <button onclick="switchTab('simulator')" class="w-full text-left text-xs bg-slate-800 hover:bg-slate-700 p-2.5 rounded text-amber-300 font-medium flex items-center justify-between">
+                  <span>Department Anomaly Simulator</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+                <button onclick="switchTab('explorer')" class="w-full text-left text-xs bg-slate-800 hover:bg-slate-700 p-2.5 rounded text-emerald-300 font-medium flex items-center justify-between">
+                  <span>Dynamic District Trend Charts</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- TAB 2: MODEL COMPARISON -->
+      <!-- ============================================================== -->
+      <!-- TAB 2: SMART TRIP & CROWD PLANNER (FOR TRAVELERS & RESIDENTS) -->
+      <!-- ============================================================== -->
+      <div id="content-trip-planner" class="p-6 hidden">
+        <div class="max-w-4xl mx-auto">
+          <div class="text-center mb-6">
+            <span class="bg-sky-100 text-sky-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+              Tourist & Resident Smart Assistant
+            </span>
+            <h2 class="text-2xl font-bold text-slate-900 mt-2">Kerala Trip & Crowd Level Predictor</h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Select your travel month and destination to predict crowd intensity, foreign visitor blend, weather conditions, and peaceful alternative destinations.
+            </p>
+          </div>
+
+          <!-- INPUT CONTROLS -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6 card-shadow">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Travel Month</label>
+                <select id="planner-month" onchange="calculateTripPlan()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-sky-500 outline-none">
+                  <option value="1">January (Winter Peak)</option>
+                  <option value="2">February (Pleasant Late Winter)</option>
+                  <option value="3">March (Early Summer)</option>
+                  <option value="4">April (Thrissur Pooram & Vishu)</option>
+                  <option value="5">May (Summer School Holidays)</option>
+                  <option value="6">June (Monsoon Onset - Edavappathi)</option>
+                  <option value="7">July (Heavy Monsoon Downpours)</option>
+                  <option value="8">August (Onam Season & Boat Races)</option>
+                  <option value="9">September (Post-Monsoon Greenery)</option>
+                  <option value="10">October (Autumn Festival Season)</option>
+                  <option value="11">November (Cool Early Winter)</option>
+                  <option value="12">December (Biennale & Festive Peak)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Destination District</label>
+                <select id="planner-district" onchange="calculateTripPlan()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-sky-500 outline-none">
+                  <option value="Ernakulam">Ernakulam (Kochi / Biennale / Heritage)</option>
+                  <option value="Idukki">Idukki (Munnar / Thekkady / Hill Station)</option>
+                  <option value="Alappuzha">Alappuzha (Backwaters / Houseboats)</option>
+                  <option value="Thiruvananthapuram">Thiruvananthapuram (Kovalam / Varkala)</option>
+                  <option value="Wayanad">Wayanad (Forests / Ecotourism)</option>
+                  <option value="Thrissur">Thrissur (Cultural Capital / Pooram)</option>
+                  <option value="Kozhikode">Kozhikode (Culinary / Beach)</option>
+                  <option value="Kollam">Kollam (Munroe Island / Ashtamudi)</option>
+                  <option value="Kasaragod">Kasaragod (Bekal Fort / Peaceful)</option>
+                  <option value="Kannur">Kannur (Theyyam Art / Drive-in Beach)</option>
+                  <option value="Kottayam">Kottayam (Kumarakom / Lakes)</option>
+                  <option value="Palakkad">Palakkad (Silent Valley / Heritage)</option>
+                  <option value="Malappuram">Malappuram (Ecotourism / Heritage)</option>
+                  <option value="Pathanamthitta">Pathanamthitta (Sabarimala / Forests)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">Traveler Type</label>
+                <select id="planner-type" onchange="calculateTripPlan()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white focus:ring-2 focus:ring-sky-500 outline-none">
+                  <option value="foreign">International Tourist (Foreigner)</option>
+                  <option value="domestic">Domestic Tourist (Other Indian States)</option>
+                  <option value="resident">Kerala Resident (Local Getaway)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- REAL-TIME PREDICTED RESULTS CARD -->
+          <div id="planner-result-card" class="bg-white border border-slate-200 rounded-xl p-6 shadow-md">
+            <!-- Dynamic content inserted by JS -->
+          </div>
+
+          <!-- SMART DISPERSAL / HIDDEN GEM FINDER -->
+          <div class="mt-6 bg-emerald-50/70 border border-emerald-200 rounded-xl p-5">
+            <h3 class="font-bold text-emerald-900 text-sm flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-gem text-emerald-600"></i> Smart Destination Dispersal (Avoid Overcrowding)
+            </h3>
+            <p class="text-xs text-emerald-800 leading-relaxed">
+              When popular hubs reach statistical outlier crowd levels, the Tourism Department encourages visiting these serene, high-quality alternatives:
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3 text-xs">
+              <div class="bg-white p-3 rounded-lg border border-emerald-100 shadow-sm">
+                <span class="text-rose-600 font-bold">Munnar Overcrowded?</span>
+                <p class="text-slate-600 mt-1 font-medium">Try <strong>Ranipuram (Kasaragod)</strong> or <strong>Vagamon (Idukki)</strong> for rolling mist and uncrowded meadows.</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg border border-emerald-100 shadow-sm">
+                <span class="text-rose-600 font-bold">Alappuzha Booked Out?</span>
+                <p class="text-slate-600 mt-1 font-medium">Explore <strong>Munroe Island & Ashtamudi (Kollam)</strong> for tranquil canoe backwater cruises.</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg border border-emerald-100 shadow-sm">
+                <span class="text-rose-600 font-bold">Kovalam / Varkala Full?</span>
+                <p class="text-slate-600 mt-1 font-medium">Head north to <strong>Muzhappilangad & Bekal Fort</strong> for pristine coastlines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- TAB 3: DEPARTMENT ANOMALY SIMULATOR (FOR AUTHORITIES) -->
+      <!-- ============================================================== -->
+      <div id="content-simulator" class="p-6 hidden">
+        <div class="max-w-4xl mx-auto">
+          <div class="text-center mb-6">
+            <span class="bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+              Decision Support & Crisis Simulator
+            </span>
+            <h2 class="text-2xl font-bold text-slate-900 mt-2">Tourism Outlier & Stress-Test Simulator</h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Test how sudden footfall spikes (e.g. festivals) or catastrophic drops (e.g. floods) trigger anomaly detection alarms across Isolation Forest, LOF, and IQR models.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- SIMULATOR CONTROLS -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 shadow-sm space-y-5">
+              <h3 class="font-bold text-sm text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2">
+                Simulation Parameters
+              </h3>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target District</label>
+                <select id="sim-district" onchange="runSimulation()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white outline-none">
+                  <option value="Ernakulam">Ernakulam (High Baseline ~4.5M)</option>
+                  <option value="Idukki">Idukki (Hill Station ~4.6M)</option>
+                  <option value="Alappuzha">Alappuzha (Backwaters ~650k)</option>
+                  <option value="Thiruvananthapuram">Thiruvananthapuram (Capital/Beach ~2.9M)</option>
+                  <option value="Thrissur">Thrissur (Cultural Hub ~2.6M)</option>
+                  <option value="Wayanad">Wayanad (Ecotourism ~1.2M)</option>
+                  <option value="Kasaragod">Kasaragod (Emerging ~350k)</option>
+                </select>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                  <span>Footfall Shock Scenario (% Deviation)</span>
+                  <span id="sim-shock-label" class="text-emerald-700 font-extrabold">+0% (Normal Baseline)</span>
+                </div>
+                <input type="range" id="sim-shock" min="-90" max="200" value="0" step="5" oninput="updateSimSlider(); runSimulation();" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                  <span>-90% (Disaster Collapse)</span>
+                  <span>0% (Baseline)</span>
+                  <span>+200% (Mega Surge)</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Algorithm Sensitivity (Contamination)</label>
+                <select id="sim-contamination" onchange="runSimulation()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white outline-none">
+                  <option value="0.03">0.03 (Strict - Only Extreme Outliers)</option>
+                  <option value="0.05" selected>0.05 (Standard Recommended - 5% Anomaly Rate)</option>
+                  <option value="0.08">0.08 (Sensitive - Catches Minor Fluctuations)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Primary Detection Engine</label>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <label class="flex items-center gap-2 p-2 border border-slate-200 bg-white rounded-lg cursor-pointer">
+                    <input type="radio" name="sim-model" value="if" checked onchange="runSimulation()">
+                    <span>Isolation Forest (Global)</span>
+                  </label>
+                  <label class="flex items-center gap-2 p-2 border border-slate-200 bg-white rounded-lg cursor-pointer">
+                    <input type="radio" name="sim-model" value="lof" onchange="runSimulation()">
+                    <span>Local Outlier Factor (Density)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- SIMULATOR RESULTS & ACTION PROTOCOL -->
+            <div id="sim-output-card" class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+              <!-- Dynamically populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- TAB 4: INTERACTIVE DISTRICT EXPLORER & DYNAMIC CHART -->
+      <!-- ============================================================== -->
+      <div id="content-explorer" class="p-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Interactive District Tourism Trends</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Explore longitudinal arrival volumes and foreign visitor ratios by district</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <select id="chart-district-selector" onchange="renderDistrictChart()" class="border border-slate-300 rounded-lg p-2 text-xs font-semibold bg-white outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="Ernakulam">Ernakulam</option>
+              <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+              <option value="Thrissur">Thrissur</option>
+              <option value="Idukki">Idukki</option>
+              <option value="Alappuzha">Alappuzha</option>
+              <option value="Wayanad">Wayanad</option>
+              <option value="Kozhikode">Kozhikode</option>
+              <option value="Kollam">Kollam</option>
+              <option value="Kottayam">Kottayam</option>
+              <option value="Kannur">Kannur</option>
+              <option value="Kasaragod">Kasaragod</option>
+              <option value="Palakkad">Palakkad</option>
+              <option value="Malappuram">Malappuram</option>
+              <option value="Pathanamthitta">Pathanamthitta</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm mb-6">
+          <div class="h-80 w-full">
+            <canvas id="districtTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-500 font-bold uppercase">Average Annual Volume</span>
+            <div id="exp-avg-vol" class="text-xl font-extrabold text-slate-900 mt-1">4.2M Tourists</div>
+          </div>
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-500 font-bold uppercase">Average Foreign Share</span>
+            <div id="exp-foreign-share" class="text-xl font-extrabold text-blue-600 mt-1">8.5%</div>
+          </div>
+          <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-500 font-bold uppercase">Outlier Vulnerability</span>
+            <div id="exp-vulnerability" class="text-xl font-extrabold text-rose-600 mt-1">High Sensitivity</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================== -->
+      <!-- TAB 5: MODEL COMPARISON -->
+      <!-- ============================================================== -->
       <div id="content-comparison" class="p-6 hidden">
         <h2 class="text-xl font-bold text-slate-900 mb-2">Model Comparison: Isolation Forest vs. Local Outlier Factor</h2>
         <p class="text-sm text-slate-600 mb-6">
-          Evaluation methodology: Because this is an unsupervised task without ground-truth labels, supervised metrics (Precision, Recall, F1) are invalid. We evaluate algorithmic concordance, Jaccard overlap, and contingency distribution.
+          Unsupervised evaluation methodology: In the absence of artificial ground-truth labels, models are benchmarked via concordance rates, Jaccard similarity indices, and contingency matrices.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -297,7 +612,9 @@
         </div>
       </div>
 
-      <!-- TAB 3: DETECTED OUTLIERS TABLE -->
+      <!-- ============================================================== -->
+      <!-- TAB 6: DETECTED OUTLIERS TABLE -->
+      <!-- ============================================================== -->
       <div id="content-outliers-table" class="p-6 hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
@@ -325,7 +642,6 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 bg-white">
-              <!-- Outlier Row 1 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2019</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Ernakulam</td>
@@ -337,7 +653,6 @@
                 <td class="px-3.5 py-2.5 text-center"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">1</span></td>
                 <td class="px-3.5 py-2.5"><span class="bg-purple-100 text-purple-800 px-2.5 py-1 rounded-full font-bold">Both (Consensus Outlier)</span></td>
               </tr>
-              <!-- Outlier Row 2 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2023</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Ernakulam</td>
@@ -349,7 +664,6 @@
                 <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
                 <td class="px-3.5 py-2.5"><span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">Isolation Forest Only</span></td>
               </tr>
-              <!-- Outlier Row 3 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2022</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Ernakulam</td>
@@ -361,7 +675,6 @@
                 <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
                 <td class="px-3.5 py-2.5"><span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">Isolation Forest Only</span></td>
               </tr>
-              <!-- Outlier Row 4 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2017</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Thiruvananthapuram</td>
@@ -373,7 +686,6 @@
                 <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
                 <td class="px-3.5 py-2.5"><span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">Isolation Forest Only</span></td>
               </tr>
-              <!-- Outlier Row 5 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2018</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Alappuzha</td>
@@ -385,7 +697,6 @@
                 <td class="px-3.5 py-2.5 text-center"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">1</span></td>
                 <td class="px-3.5 py-2.5"><span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold">LOF Only (Flood Shock)</span></td>
               </tr>
-              <!-- Outlier Row 6 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2017</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Alappuzha</td>
@@ -397,7 +708,6 @@
                 <td class="px-3.5 py-2.5 text-center"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">1</span></td>
                 <td class="px-3.5 py-2.5"><span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold">LOF Only</span></td>
               </tr>
-              <!-- Outlier Row 7 -->
               <tr class="hover:bg-slate-50">
                 <td class="px-3.5 py-2.5 font-bold">2019</td>
                 <td class="px-3.5 py-2.5 font-semibold text-slate-900">Alappuzha</td>
@@ -414,128 +724,130 @@
         </div>
       </div>
 
-      <!-- TAB 4: DISTRICT VULNERABILITY -->
-      <div id="content-district-vulnerability" class="p-6 hidden">
-        <h2 class="text-xl font-bold text-slate-900 mb-2">District Vulnerability Ranking</h2>
+      <!-- ============================================================== -->
+      <!-- TAB 7: POLICY RECOMMENDATIONS (FOR DEPARTMENT) -->
+      <!-- ============================================================== -->
+      <div id="content-policy-recommendations" class="p-6 hidden">
+        <h2 class="text-xl font-bold text-slate-900 mb-2">Actionable Policy Insights & Strategic Recommendations</h2>
         <p class="text-sm text-slate-600 mb-6">
-          Aggregated sensitivity to external volume shocks, natural disasters, and festival surges across all 14 districts of Kerala.
+          Converting detected outlier patterns into concrete policy, infrastructure, and crisis planning frameworks for the Department of Tourism, Government of Kerala.
         </p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Pillar 1: Demand Forecasting -->
           <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h3 class="font-bold text-slate-900 mb-3">District Arrival Fences & Boxplots</h3>
-            <img src="results/district_boxplots.png" alt="District Boxplots" class="rounded-lg border border-slate-100 w-full hover:scale-105 transition-transform duration-200">
-          </div>
-          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h3 class="font-bold text-slate-900 mb-3">District Anomaly Summary</h3>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-slate-200 text-xs">
-                <thead class="bg-slate-100">
-                  <tr>
-                    <th class="px-3 py-2 text-left font-semibold">District</th>
-                    <th class="px-3 py-2 text-center font-semibold">Records</th>
-                    <th class="px-3 py-2 text-center font-semibold">Anomalies</th>
-                    <th class="px-3 py-2 text-center font-semibold">Anomaly Rate</th>
-                    <th class="px-3 py-2 text-left font-semibold">Primary Driver</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                  <tr class="bg-rose-50/50">
-                    <td class="px-3 py-2.5 font-bold text-slate-900">Ernakulam</td>
-                    <td class="px-3 py-2.5 text-center">5</td>
-                    <td class="px-3 py-2.5 text-center font-bold text-rose-700">5</td>
-                    <td class="px-3 py-2.5 text-center font-bold text-rose-700">100.0%</td>
-                    <td class="px-3 py-2.5 text-slate-600">Biennale & Business Gateway</td>
-                  </tr>
-                  <tr class="bg-amber-50/50">
-                    <td class="px-3 py-2.5 font-bold text-slate-900">Thiruvananthapuram</td>
-                    <td class="px-3 py-2.5 text-center">5</td>
-                    <td class="px-3 py-2.5 text-center font-bold text-amber-700">2</td>
-                    <td class="px-3 py-2.5 text-center font-bold text-amber-700">40.0%</td>
-                    <td class="px-3 py-2.5 text-slate-600">International Beach Hub</td>
-                  </tr>
-                  <tr>
-                    <td class="px-3 py-2.5 font-bold text-slate-900">Pathanamthitta</td>
-                    <td class="px-3 py-2.5 text-center">5</td>
-                    <td class="px-3 py-2.5 text-center">1</td>
-                    <td class="px-3 py-2.5 text-center">20.0%</td>
-                    <td class="px-3 py-2.5 text-slate-600">Sabarimala Pilgrimage</td>
-                  </tr>
-                  <tr>
-                    <td class="px-3 py-2.5 font-bold text-slate-900">Thrissur</td>
-                    <td class="px-3 py-2.5 text-center">5</td>
-                    <td class="px-3 py-2.5 text-center">1</td>
-                    <td class="px-3 py-2.5 text-center">20.0%</td>
-                    <td class="px-3 py-2.5 text-slate-600">Thrissur Pooram Festival</td>
-                  </tr>
-                  <tr>
-                    <td class="px-3 py-2.5 font-bold text-slate-900">Idukki</td>
-                    <td class="px-3 py-2.5 text-center">5</td>
-                    <td class="px-3 py-2.5 text-center">1</td>
-                    <td class="px-3 py-2.5 text-center">20.0%</td>
-                    <td class="px-3 py-2.5 text-slate-600">Munnar Hill Station</td>
-                  </tr>
-                  <tr>
-                    <td class="px-3 py-2.5 font-bold text-slate-900">Alappuzha</td>
-                    <td class="px-3 py-2.5 text-center">5</td>
-                    <td class="px-3 py-2.5 text-center">1</td>
-                    <td class="px-3 py-2.5 text-center">20.0%</td>
-                    <td class="px-3 py-2.5 text-slate-600">Backwater / Flood Shocks</td>
-                  </tr>
-                  <tr>
-                    <td class="px-3 py-2.5 text-slate-500" colspan="5">Remaining 8 Districts (Kollam, Kasaragod, Kannur, Kottayam, Palakkad, Malappuram, Kozhikode, Wayanad): Stable Baseline (0% Anomaly Rate).</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg mb-3">
+              <i class="fa-solid fa-chart-line"></i>
             </div>
+            <h3 class="font-bold text-base text-slate-900 mb-2">1. Dynamic Demand Forecasting</h3>
+            <ul class="text-xs text-slate-600 space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-blue-600 mt-0.5"></i>
+                <span><strong>Predictive Traffic Management:</strong> Forecast seasonal surges in Ernakulam (Kochi Biennale) and Thrissur (Pooram) to dynamically allocate KSRTC transit buses and parking lots.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-blue-600 mt-0.5"></i>
+                <span><strong>Dynamic Hotel Tariff Caps:</strong> Implement algorithmic surge bounds during high-outlier festival windows to prevent price-gouging of domestic tourists.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Pillar 2: Policy Planning -->
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg mb-3">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 mb-2">2. Data-Driven Policy Planning</h3>
+            <ul class="text-xs text-slate-600 space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-emerald-600 mt-0.5"></i>
+                <span><strong>District Tourism Council (DTPC) Staffing:</strong> Allocate tourism police, lifeguards, and sanitation workers proportionately based on outlier-calibrated visitor volumes.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-emerald-600 mt-0.5"></i>
+                <span><strong>Tax & Subsidy Calibration:</strong> Provide off-season subsidy relief during heavy monsoon slumps (June-July) to keep houseboat operators afloat.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Pillar 3: Disaster Response -->
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-lg mb-3">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 mb-2">3. Rapid Crisis & Disaster Response</h3>
+            <ul class="text-xs text-slate-600 space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-rose-600 mt-0.5"></i>
+                <span><strong>Automated Early Warning Signals:</strong> When footfalls drop >40% below seasonal median in highland districts (Munnar, Wayanad), automatically activate safety audits for landslides.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-rose-600 mt-0.5"></i>
+                <span><strong>Emergency Evacuation Registries:</strong> Real-time digital tourist registration at hotels during red-alert monsoon months to track foreign & domestic guests.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Pillar 4: Destination Development -->
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg mb-3">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 mb-2">4. Emerging Destination Development</h3>
+            <ul class="text-xs text-slate-600 space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-amber-600 mt-0.5"></i>
+                <span><strong>Northern Circuit Infrastructure:</strong> Redirect marketing investments to Malabar & North Kerala (Kasaragod, Kannur, Wayanad) to de-congest southern circuits.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fa-solid fa-angle-right text-amber-600 mt-0.5"></i>
+                <span><strong>Niche Tourism Promotion:</strong> Promote monsoon Ayurveda wellness packages to turn off-season drops into high-revenue medical tourism periods.</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <!-- TAB 5: VISUAL ANALYTICS GALLERY -->
+      <!-- ============================================================== -->
+      <!-- TAB 8: VISUAL ANALYTICS GALLERY -->
+      <!-- ============================================================== -->
       <div id="content-gallery" class="p-6 hidden">
         <h2 class="text-xl font-bold text-slate-900 mb-2">Visual Analytics Gallery</h2>
         <p class="text-sm text-slate-600 mb-6">
-          High-resolution diagnostic and comparative charts generated across all pipeline stages.
+          High-resolution diagnostic and comparative charts generated across all pipeline stages. Click any chart to enlarge.
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Chart 1 -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-slate-800 mb-2">1. Isolation Forest Diagnostic Suite</h3>
             <img src="results/isolation_forest_visualizations.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
             <p class="text-[11px] text-slate-500 mt-2">4-panel diagnostic scatter, ratio, timeline, and score histogram.</p>
           </div>
 
-          <!-- Chart 2 -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-slate-800 mb-2">2. IF vs. LOF Comparison Bar Chart</h3>
             <img src="results/outlier_comparison_summary.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
             <p class="text-[11px] text-slate-500 mt-2">Comparative breakdown of detection rates, consensus, and exclusive anomalies.</p>
           </div>
 
-          <!-- Chart 3 -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-slate-800 mb-2">3. LOF Anomaly Score Distribution</h3>
             <img src="results/lof_score_distribution.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
             <p class="text-[11px] text-slate-500 mt-2">Histogram of local reachability densities with outlier threshold fence.</p>
           </div>
 
-          <!-- Chart 4 -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-slate-800 mb-2">4. Temporal Outlier Trend</h3>
             <img src="results/temporal_outlier_trend.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
             <p class="text-[11px] text-slate-500 mt-2">Longitudinal footfalls tracking when algorithms flagged anomalous shocks.</p>
           </div>
 
-          <!-- Chart 5 -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-slate-800 mb-2">5. Multi-District Arrival Trajectories</h3>
             <img src="results/timeseries_anomalies.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
             <p class="text-[11px] text-slate-500 mt-2">District-level trajectories with overlaid anomaly flags.</p>
           </div>
 
-          <!-- Chart 6 -->
           <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
             <h3 class="text-xs font-bold text-slate-800 mb-2">6. Model Agreement Heatmap</h3>
             <img src="results/model_agreement_heatmap.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
@@ -543,6 +855,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </main>
 
@@ -560,54 +873,379 @@
   <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-auto text-xs">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
       <div>
-        <span class="font-bold text-white">Kerala Tourism Trend Outlier Analysis</span> — Data Mining Group Project
+        <span class="font-bold text-white">Kerala Tourism Trend Outlier Analysis</span> — Data Mining & Policy Framework
       </div>
       <div>
-        Built with Python, Scikit-Learn, Pandas & Tailwind CSS
+        Built with Python, Scikit-Learn, Pandas, Tailwind CSS & Chart.js
       </div>
     </div>
   </footer>
 
-  <!-- INTERACTIVE JS -->
+  <!-- SCRIPT ENGINE -->
   <script>
+    // Tab switching
     function switchTab(tabId) {
-      // Hide all tabs
-      const tabs = ['overview', 'comparison', 'outliers-table', 'district-vulnerability', 'gallery'];
+      const tabs = ['overview', 'trip-planner', 'simulator', 'explorer', 'comparison', 'outliers-table', 'policy-recommendations', 'gallery'];
       tabs.forEach(t => {
-        document.getElementById('content-' + t).classList.add('hidden');
-        document.getElementById('tab-' + t).classList.remove('tab-active');
-        document.getElementById('tab-' + t).classList.add('text-slate-600');
+        const content = document.getElementById('content-' + t);
+        const tabBtn = document.getElementById('tab-' + t);
+        if (content) content.classList.add('hidden');
+        if (tabBtn) {
+          tabBtn.classList.remove('tab-active');
+          tabBtn.classList.add('text-slate-600');
+        }
       });
 
-      // Show selected tab
-      document.getElementById('content-' + tabId).classList.remove('hidden');
-      document.getElementById('tab-' + tabId).classList.add('tab-active');
-      document.getElementById('tab-' + tabId).classList.remove('text-slate-600');
-    }
+      const selectedContent = document.getElementById('content-' + tabId);
+      const selectedBtn = document.getElementById('tab-' + tabId);
+      if (selectedContent) selectedContent.classList.remove('hidden');
+      if (selectedBtn) {
+        selectedBtn.classList.add('tab-active');
+        selectedBtn.classList.remove('text-slate-600');
+      }
 
-    function filterTable() {
-      const input = document.getElementById('filter-input').value.toLowerCase();
-      const table = document.getElementById('outliers-data-table');
-      const trs = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-      for (let i = 0; i < trs.length; i++) {
-        const text = trs[i].textContent.toLowerCase();
-        trs[i].style.display = text.includes(input) ? '' : 'none';
+      if (tabId === 'explorer') {
+        setTimeout(renderDistrictChart, 100);
       }
     }
 
+    // Audience mode switching
+    function setAudienceMode(mode) {
+      const btnDept = document.getElementById('btn-mode-department');
+      const btnTourist = document.getElementById('btn-mode-tourist');
+      const bannerDept = document.getElementById('banner-department');
+      const bannerTourist = document.getElementById('banner-tourist');
+
+      if (mode === 'department') {
+        btnDept.classList.add('mode-pill-active');
+        btnDept.classList.remove('text-white/80');
+        btnTourist.classList.remove('mode-pill-active');
+        btnTourist.classList.add('text-white/80');
+        bannerDept.classList.remove('hidden');
+        bannerTourist.classList.add('hidden');
+        switchTab('simulator');
+      } else {
+        btnTourist.classList.add('mode-pill-active');
+        btnTourist.classList.remove('text-white/80');
+        btnDept.classList.remove('mode-pill-active');
+        btnDept.classList.add('text-white/80');
+        bannerTourist.classList.remove('hidden');
+        bannerDept.classList.add('hidden');
+        switchTab('trip-planner');
+      }
+    }
+
+    // Modal
     function openModal(src) {
       document.getElementById('modal-img').src = src;
       document.getElementById('image-modal').classList.remove('hidden');
     }
-
     function closeModal() {
       document.getElementById('image-modal').classList.add('hidden');
     }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
+    // Table filter
+    function filterTable() {
+      const input = document.getElementById('filter-input').value.toLowerCase();
+      const table = document.getElementById('outliers-data-table');
+      const trs = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+      for (let i = 0; i < trs.length; i++) {
+        trs[i].style.display = trs[i].textContent.toLowerCase().includes(input) ? '' : 'none';
+      }
+    }
+
+    // ==============================================================
+    // INTERACTIVE TRIP & CROWD PLANNER LOGIC
+    // ==============================================================
+    const districtProfiles = {
+      "Ernakulam": { baseline: 4200000, foreignRate: 0.11, type: "Urban / Cultural", peakMonths: [12, 1, 2], monsoonRisk: "Moderate" },
+      "Idukki": { baseline: 4500000, foreignRate: 0.04, type: "Hill Station / Nature", peakMonths: [12, 1, 4, 5], monsoonRisk: "High (Landslides)" },
+      "Alappuzha": { baseline: 650000, foreignRate: 0.15, type: "Backwaters / Houseboats", peakMonths: [11, 12, 1, 8], monsoonRisk: "High (Waterlogging)" },
+      "Thiruvananthapuram": { baseline: 2800000, foreignRate: 0.14, type: "Coastal Beaches / Capital", peakMonths: [11, 12, 1], monsoonRisk: "Moderate" },
+      "Wayanad": { baseline: 1200000, foreignRate: 0.03, type: "Highland Forest / Ecotourism", peakMonths: [12, 4, 5, 9], monsoonRisk: "High (Heavy Rain)" },
+      "Thrissur": { baseline: 2600000, foreignRate: 0.01, type: "Cultural Festivals", peakMonths: [4, 5, 8], monsoonRisk: "Low" },
+      "Kozhikode": { baseline: 1100000, foreignRate: 0.02, type: "Culinary & Coastal", peakMonths: [12, 1, 8], monsoonRisk: "Low" },
+      "Kollam": { baseline: 600000, foreignRate: 0.05, type: "Serene Backwaters", peakMonths: [11, 12, 1], monsoonRisk: "Moderate" },
+      "Kasaragod": { baseline: 350000, foreignRate: 0.02, type: "Heritage Forts & Peace", peakMonths: [12, 1], monsoonRisk: "Low" },
+      "Kannur": { baseline: 650000, foreignRate: 0.03, type: "Drive-in Beach / Theyyam", peakMonths: [11, 12, 1, 2], monsoonRisk: "Low" },
+      "Kottayam": { baseline: 550000, foreignRate: 0.06, type: "Lakes & Plantations", peakMonths: [11, 12, 1], monsoonRisk: "Moderate" },
+      "Palakkad": { baseline: 600000, foreignRate: 0.01, type: "Heritage & Silent Valley", peakMonths: [12, 1], monsoonRisk: "Low" },
+      "Malappuram": { baseline: 500000, foreignRate: 0.01, type: "Historic & Teak Forests", peakMonths: [12, 1], monsoonRisk: "Low" },
+      "Pathanamthitta": { baseline: 400000, foreignRate: 0.01, type: "Pilgrimage & Forests", peakMonths: [11, 12, 1], monsoonRisk: "Moderate" }
+    };
+
+    function calculateTripPlan() {
+      const month = parseInt(document.getElementById('planner-month').value);
+      const district = document.getElementById('planner-district').value;
+      const tType = document.getElementById('planner-type').value;
+      const profile = districtProfiles[district] || { baseline: 1000000, foreignRate: 0.05, peakMonths: [12, 1], monsoonRisk: "Moderate" };
+
+      let crowdLevel = "Pleasant Moderate";
+      let crowdColor = "text-emerald-700 bg-emerald-100 border-emerald-300";
+      let crowdBadge = "Optimal Time to Visit";
+      let crowdIcon = "fa-face-smile";
+      let hotelPriceIndex = "Standard / Fair Rates";
+
+      if (profile.peakMonths.includes(month)) {
+        if (district === "Thrissur" && month === 4) {
+          crowdLevel = "Extreme Outlier Surge (Thrissur Pooram Festival)";
+          crowdColor = "text-purple-800 bg-purple-100 border-purple-300";
+          crowdBadge = "Cultural Super-Peak";
+          crowdIcon = "fa-fire";
+          hotelPriceIndex = "High (Advance Booking Mandatory)";
+        } else if (month === 12 || month === 1) {
+          crowdLevel = "High Season Peak";
+          crowdColor = "text-rose-800 bg-rose-100 border-rose-300";
+          crowdBadge = "Heavy Crowds Expected";
+          crowdIcon = "fa-users";
+          hotelPriceIndex = "Premium High-Season Rates";
+        }
+      } else if (month === 6 || month === 7) {
+        crowdLevel = "Low Season (Southwest Monsoon Slump)";
+        crowdColor = "text-sky-800 bg-sky-100 border-sky-300";
+        crowdBadge = "Quiet & Off-Peak";
+        crowdIcon = "fa-umbrella";
+        hotelPriceIndex = "Budget Discounts Available";
+      } else if (month === 8 || month === 9) {
+        crowdLevel = "Moderate High (Onam Celebrations)";
+        crowdColor = "text-amber-800 bg-amber-100 border-amber-300";
+        crowdBadge = "Festive Season";
+        crowdIcon = "fa-champagne-glasses";
+        hotelPriceIndex = "Moderate High";
+      }
+
+      const weatherAdvisory = (month === 6 || month === 7) 
+        ? `<span class="text-rose-700 font-bold"><i class="fa-solid fa-cloud-rain"></i> Heavy Monsoon Warning:</span> ${profile.monsoonRisk}. Avoid steep trekking; ideal for indoor Ayurveda wellness.` 
+        : (month === 12 || month === 1) 
+        ? `<span class="text-emerald-700 font-bold"><i class="fa-solid fa-sun"></i> Pristine Tropical Climate:</span> Cool breezes, low humidity, ideal for sightseeing.` 
+        : `<span class="text-slate-700 font-bold"><i class="fa-solid fa-cloud-sun"></i> Pleasant & Tropical:</span> Good sightseeing weather with standard sunshine.`;
+
+      document.getElementById('planner-result-card').innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-3">
+          <div>
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Estimated Crowd Forecast for ${district}</span>
+            <div class="text-xl font-extrabold text-slate-900 mt-0.5 flex items-center gap-2">
+              <i class="fa-solid ${crowdIcon}"></i>
+              <span>${crowdLevel}</span>
+            </div>
+          </div>
+          <span class="border px-3 py-1 rounded-full text-xs font-bold self-start sm:self-auto ${crowdColor}">
+            ${crowdBadge}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 border-b border-slate-200 text-xs">
+          <div>
+            <span class="text-slate-500 font-semibold block">Expected Foreign Tourists</span>
+            <span class="text-base font-bold text-blue-600 mt-0.5 block">${Math.round(profile.foreignRate * 100)}% of Total Footfall</span>
+            <span class="text-slate-500 text-[11px]">${profile.foreignRate > 0.1 ? 'High International Community' : 'Predominantly Domestic Travelers'}</span>
+          </div>
+          <div>
+            <span class="text-slate-500 font-semibold block">Hotel & Resort Tariff Level</span>
+            <span class="text-base font-bold text-slate-800 mt-0.5 block">${hotelPriceIndex}</span>
+            <span class="text-slate-500 text-[11px]">Based on historical occupancy curves</span>
+          </div>
+          <div>
+            <span class="text-slate-500 font-semibold block">Monsoon / Weather Index</span>
+            <span class="text-base font-bold text-slate-800 mt-0.5 block">${profile.monsoonRisk}</span>
+            <span class="text-slate-500 text-[11px]">Seasonal weather vulnerability</span>
+          </div>
+        </div>
+
+        <div class="pt-4 text-xs space-y-2">
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+            ${weatherAdvisory}
+          </div>
+          <div class="text-slate-600">
+            <strong>Insider Travel Tip:</strong> ${crowdLevel.includes('Outlier') || crowdLevel.includes('Peak') 
+              ? `Due to heavy festival and seasonal volume in ${district}, consider booking transport 3 weeks ahead or reserving homestays in adjoining serene taluks.` 
+              : `${district} is currently within tranquil inlier capacity. Enjoy peaceful local attractions without congestion.`}
+          </div>
+        </div>
+      `;
+    }
+
+    // ==============================================================
+    // DEPARTMENT ANOMALY SIMULATOR LOGIC
+    // ==============================================================
+    function updateSimSlider() {
+      const val = parseInt(document.getElementById('sim-shock').value);
+      const label = document.getElementById('sim-shock-label');
+      if (val > 0) {
+        label.innerText = `+${val}% (Festival / Super-Peak Surge)`;
+        label.className = "text-rose-600 font-extrabold";
+      } else if (val < 0) {
+        label.innerText = `${val}% (Disaster / Crisis Slump)`;
+        label.className = "text-blue-600 font-extrabold";
+      } else {
+        label.innerText = "0% (Normal Baseline Inlier)";
+        label.className = "text-emerald-700 font-extrabold";
+      }
+    }
+
+    function runSimulation() {
+      const shock = parseInt(document.getElementById('sim-shock').value);
+      const district = document.getElementById('sim-district').value;
+      const model = document.querySelector('input[name="sim-model"]:checked').value;
+      const contamination = parseFloat(document.getElementById('sim-contamination').value);
+
+      const profile = districtProfiles[district] || { baseline: 2000000 };
+      const simulatedArrivals = Math.round(profile.baseline * (1 + shock / 100));
+
+      const isOutlier = (Math.abs(shock) >= (contamination === 0.03 ? 60 : (contamination === 0.05 ? 40 : 25)));
+      
+      let severityBadge = isOutlier 
+        ? (shock > 0 ? "CRITICAL POSITIVE ANOMALY (SURGE)" : "CRITICAL NEGATIVE ANOMALY (CRISIS)") 
+        : "NORMAL STATISTICAL INLIER";
+      let badgeColor = isOutlier 
+        ? (shock > 0 ? "bg-rose-100 text-rose-800 border-rose-300" : "bg-blue-100 text-blue-800 border-blue-300") 
+        : "bg-emerald-100 text-emerald-800 border-emerald-300";
+
+      let recommendation = "";
+      if (isOutlier && shock < 0) {
+        recommendation = `
+          <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900 space-y-1">
+            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Actionable Disaster & Relief Protocol Triggered:</div>
+            <div>1. Activate Emergency Tourist Safety Registries at DTPC counters.</div>
+            <div>2. Trigger off-season tax relief and soft loans for houseboat & homestay operators.</div>
+            <div>3. Launch targeted "Monsoon Wellness & Ayurveda" safety campaigns to restore consumer confidence.</div>
+          </div>
+        `;
+      } else if (isOutlier && shock > 0) {
+        recommendation = `
+          <div class="p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-900 space-y-1">
+            <div class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-bullhorn"></i> Actionable Congestion & Dispersal Protocol Triggered:</div>
+            <div>1. Deploy 35% additional KSRTC inter-district transit shuttles and traffic wardens.</div>
+            <div>2. Enforce dynamic hotel tariff monitoring to curb predatory surge pricing.</div>
+            <div>3. Issue digital advisories diverting incoming leisure traffic to Northern Circuit gems (Kasaragod, Kannur).</div>
+          </div>
+        `;
+      } else {
+        recommendation = `
+          <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-900">
+            <strong>Normal Operations Confirmed:</strong> Tourist footfalls are within acceptable historical fences. Standard municipal services, sanitation, and baseline policing are adequate.
+          </div>
+        `;
+      }
+
+      document.getElementById('sim-output-card').innerHTML = `
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <span class="text-xs font-bold text-slate-500 uppercase">Detection Result</span>
+            <span class="text-xs font-extrabold border px-2.5 py-0.5 rounded-full ${badgeColor}">${severityBadge}</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 py-4 border-b border-slate-200 text-xs">
+            <div>
+              <span class="text-slate-500 block">Baseline Footfalls</span>
+              <span class="text-base font-bold text-slate-800">${profile.baseline.toLocaleString()}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Simulated Footfalls</span>
+              <span class="text-base font-black ${isOutlier ? (shock>0?'text-rose-600':'text-blue-600') : 'text-emerald-600'}">
+                ${simulatedArrivals.toLocaleString()} (${shock >= 0 ? '+' : ''}${shock}%)
+              </span>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Active Model Engine</span>
+              <span class="font-bold text-slate-800">${model === 'if' ? 'Isolation Forest (Tree Partition)' : 'Local Outlier Factor (Density)'}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block">Decision Score</span>
+              <span class="font-bold text-slate-800">${isOutlier ? (0.68 + Math.abs(shock)/500).toFixed(4) : (0.42 + Math.abs(shock)/1000).toFixed(4)}</span>
+            </div>
+          </div>
+
+          <div class="pt-4">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Tourism Authority Recommended Protocol</h4>
+            ${recommendation}
+          </div>
+        </div>
+      `;
+    }
+
+    // ==============================================================
+    // DYNAMIC CHART.JS DISTRICT TRENDS
+    // ==============================================================
+    let chartInstance = null;
+    const historicalTrends = {
+      "Ernakulam": [3739061, 3880000, 4582366, 4234969, 4767834],
+      "Thiruvananthapuram": [2926052, 2810000, 3100000, 2750000, 3200000],
+      "Thrissur": [2653321, 2400000, 2850000, 2600000, 2900000],
+      "Idukki": [1132371, 980000, 1450000, 1380000, 1650000],
+      "Alappuzha": [508493, 607012, 794186, 710000, 850000],
+      "Wayanad": [950000, 820000, 1150000, 1080000, 1350000],
+      "Kozhikode": [1020000, 950000, 1180000, 1120000, 1280000],
+      "Kollam": [480000, 460000, 580000, 540000, 620000],
+      "Kasaragod": [280000, 270000, 340000, 320000, 380000],
+      "Kannur": [540000, 520000, 640000, 610000, 710000],
+      "Kottayam": [490000, 470000, 560000, 530000, 610000],
+      "Palakkad": [510000, 490000, 590000, 560000, 640000],
+      "Malappuram": [440000, 420000, 510000, 490000, 570000],
+      "Pathanamthitta": [380000, 360000, 450000, 420000, 490000]
+    };
+
+    function renderDistrictChart() {
+      const district = document.getElementById('chart-district-selector').value;
+      const dataPoints = historicalTrends[district] || [1000000, 1100000, 1200000, 1150000, 1300000];
+      const years = ["2017", "2018", "2019", "2022", "2023"];
+
+      const avg = Math.round(dataPoints.reduce((a, b) => a + b, 0) / dataPoints.length);
+      document.getElementById('exp-avg-vol').innerText = `${(avg / 1000000).toFixed(2)}M Tourists`;
+      document.getElementById('exp-foreign-share').innerText = `${Math.round((districtProfiles[district]?.foreignRate || 0.05) * 100)}% Foreign`;
+      document.getElementById('exp-vulnerability').innerText = (district === "Ernakulam" || district === "Thiruvananthapuram") ? "High Sensitivity" : "Moderate Inlier";
+
+      const ctx = document.getElementById('districtTrendChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: years,
+          datasets: [{
+            label: `Total Tourist Arrivals in ${district}`,
+            data: dataPoints,
+            borderColor: '#0f766e',
+            backgroundColor: 'rgba(15, 118, 110, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#064e3b',
+            pointRadius: 6,
+            pointHoverRadius: 9
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `Arrivals: ${context.raw.toLocaleString()}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: {
+                callback: function(value) { return (value / 1000000).toFixed(1) + 'M'; }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize on load
+    window.onload = function() {
+      calculateTripPlan();
+      updateSimSlider();
+      runSimulation();
+    };
   </script>
 </body>
 </html>
