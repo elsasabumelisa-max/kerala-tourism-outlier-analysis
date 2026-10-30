@@ -36,26 +36,37 @@ def plot_timeseries_outliers(
     Highlights historic disruptions like August 2018 Floods and 2020 COVID lockdowns.
     """
     set_plot_style()
+    dist_col = "District" if "District" in df.columns else ("district" if "district" in df.columns else None)
+    if dist_col is None:
+        return
+
     if districts is None:
-        # Highlight top diverse representative districts
-        districts = ["Ernakulam", "Idukki", "Alappuzha", "Wayanad", "Thiruvananthapuram"]
+        all_d = df[dist_col].unique().tolist()
+        candidates = ["Ernakulam", "Idukki", "Alappuzha", "Wayanad", "Thiruvananthapuram"]
+        districts = [d for d in candidates if d in all_d]
+        if not districts:
+            districts = all_d[:5]
 
-    data = df[df["District"].isin(districts)].copy()
-    data = data.sort_values(by="Date")
+    time_col = "Date" if "Date" in df.columns else ("date" if "date" in df.columns else ("Year" if "Year" in df.columns else "year"))
+    val_col = "Total_Tourists" if "Total_Tourists" in df.columns else ("total" if "total" in df.columns else ("Domestic_Tourists" if "Domestic_Tourists" in df.columns else "domestic"))
 
-    fig, axes = plt.subplots(len(districts), 1, figsize=(14, 3.2 * len(districts)), sharex=True)
+    data = df[df[dist_col].isin(districts)].copy()
+    if time_col in data.columns:
+        data = data.sort_values(by=time_col)
+
+    fig, axes = plt.subplots(len(districts), 1, figsize=(14, 3.2 * max(1, len(districts))), sharex=True)
     if len(districts) == 1:
         axes = [axes]
 
     for ax, dist in zip(axes, districts):
-        sub = data[data["District"] == dist]
+        sub = data[data[dist_col] == dist]
         normal_pts = sub[sub[outlier_col] == 0]
         outlier_pts = sub[sub[outlier_col] == 1]
 
         # Trajectory line
         ax.plot(
-            sub["Date"],
-            sub["Total_Tourists"],
+            sub[time_col],
+            sub[val_col],
             color="#2b5c8f",
             linewidth=1.8,
             alpha=0.85,
@@ -64,8 +75,8 @@ def plot_timeseries_outliers(
 
         # Inlier markers
         ax.scatter(
-            normal_pts["Date"],
-            normal_pts["Total_Tourists"],
+            normal_pts[time_col],
+            normal_pts[val_col],
             color="#4682b4",
             s=22,
             alpha=0.6,
@@ -73,8 +84,8 @@ def plot_timeseries_outliers(
 
         # Outlier markers
         ax.scatter(
-            outlier_pts["Date"],
-            outlier_pts["Total_Tourists"],
+            outlier_pts[time_col],
+            outlier_pts[val_col],
             color="#d9381e",
             s=65,
             edgecolor="black",
@@ -84,10 +95,10 @@ def plot_timeseries_outliers(
         )
 
         ax.set_title(f"District: {dist} - Tourist Arrival Trajectory & Anomalies")
-        ax.set_ylabel("Total Tourists")
+        ax.set_ylabel(val_col)
         ax.legend(loc="upper right", frameon=True)
 
-    axes[-1].set_xlabel("Timeline (Year - Month)")
+    axes[-1].set_xlabel(f"Timeline ({time_col})")
     plt.tight_layout()
 
     if save_path:
@@ -113,37 +124,34 @@ def plot_multivariate_scatter(
 
     palette = {0: "#3470a3", 1: "#e03b24"}
 
-    # 1. Domestic vs Foreign tourists
-    sns.scatterplot(
-        data=df,
-        x="Domestic_Tourists",
-        y="Foreign_Tourists",
-        hue=outlier_col,
-        palette=palette,
-        alpha=0.75,
-        s=50,
-        ax=ax1,
-    )
-    ax1.set_title("Domestic vs. Foreign Tourist Footfalls")
-    ax1.set_xlabel("Domestic Tourists")
-    ax1.set_ylabel("Foreign Tourists")
-    ax1.legend(title="Anomaly", labels=["Normal", "Outlier"])
+    dom = "Domestic_Tourists" if "Domestic_Tourists" in df.columns else ("domestic" if "domestic" in df.columns else None)
+    for_col = "Foreign_Tourists" if "Foreign_Tourists" in df.columns else ("foreign" if "foreign" in df.columns else None)
+    occ = "Hotel_Occupancy_Rate" if "Hotel_Occupancy_Rate" in df.columns else None
+    rev = "Tourism_Revenue_Cr" if "Tourism_Revenue_Cr" in df.columns else ("total" if "total" in df.columns else None)
 
-    # 2. Hotel Occupancy vs Tourism Revenue
-    sns.scatterplot(
-        data=df,
-        x="Hotel_Occupancy_Rate",
-        y="Tourism_Revenue_Cr",
-        hue=outlier_col,
-        palette=palette,
-        alpha=0.75,
-        s=50,
-        ax=ax2,
-    )
-    ax2.set_title("Hotel Occupancy (%) vs. Tourism Revenue (₹ Crores)")
-    ax2.set_xlabel("Hotel Occupancy Rate (%)")
-    ax2.set_ylabel("Tourism Revenue (₹ Cr)")
-    ax2.legend(title="Anomaly", labels=["Normal", "Outlier"])
+    # 1. Primary volume scatter
+    if dom and for_col:
+        sns.scatterplot(data=df, x=dom, y=for_col, hue=outlier_col, palette=palette, alpha=0.75, s=50, ax=ax1)
+        ax1.set_title(f"{dom} vs. {for_col}")
+        ax1.set_xlabel(dom)
+        ax1.set_ylabel(for_col)
+        ax1.legend(title="Anomaly", labels=["Normal", "Outlier"])
+
+    # 2. Secondary scatter
+    if occ and rev:
+        sns.scatterplot(data=df, x=occ, y=rev, hue=outlier_col, palette=palette, alpha=0.75, s=50, ax=ax2)
+        ax2.set_title(f"{occ} vs. {rev}")
+        ax2.set_xlabel(occ)
+        ax2.set_ylabel(rev)
+        ax2.legend(title="Anomaly", labels=["Normal", "Outlier"])
+    elif "foreign_ratio" in df.columns and "total" in df.columns:
+        sns.scatterplot(data=df, x="total", y="foreign_ratio", hue=outlier_col, palette=palette, alpha=0.75, s=50, ax=ax2)
+        ax2.set_title("Total Tourists vs. Foreign Ratio")
+        ax2.set_xlabel("Total")
+        ax2.set_ylabel("Foreign Ratio")
+        ax2.legend(title="Anomaly", labels=["Normal", "Outlier"])
+    else:
+        ax2.text(0.5, 0.5, "Secondary features unavailable", ha="center", va="center")
 
     plt.tight_layout()
 
@@ -168,8 +176,11 @@ def plot_district_boxplots(
     set_plot_style()
     plt.figure(figsize=(13, 8))
 
+    dist = "District" if "District" in df.columns else ("district" if "district" in df.columns else df.columns[0])
+    val = "Total_Tourists" if "Total_Tourists" in df.columns else ("total" if "total" in df.columns else ("Domestic_Tourists" if "Domestic_Tourists" in df.columns else "domestic"))
+
     order = (
-        df.groupby("District")["Total_Tourists"]
+        df.groupby(dist)[val]
         .median()
         .sort_values(ascending=False)
         .index
@@ -178,8 +189,8 @@ def plot_district_boxplots(
     # Base boxplot
     sns.boxplot(
         data=df,
-        y="District",
-        x="Total_Tourists",
+        y=dist,
+        x=val,
         order=order,
         color="#cce2f5",
         fliersize=0,
@@ -190,8 +201,8 @@ def plot_district_boxplots(
     palette = {0: "#4a7c59", 1: "#d9381e"}
     sns.stripplot(
         data=df,
-        y="District",
-        x="Total_Tourists",
+        y=dist,
+        x=val,
         order=order,
         hue=outlier_col,
         palette=palette,
@@ -265,18 +276,27 @@ def plot_seasonal_heatmap(
     Months (1-12) and Districts to reveal seasonal vulnerability patterns.
     """
     set_plot_style()
+    dist = "District" if "District" in df.columns else ("district" if "district" in df.columns else df.columns[0])
+    has_month = "Month" in df.columns or "month" in df.columns
+    time_c = "Month" if "Month" in df.columns else ("month" if "month" in df.columns else ("Year" if "Year" in df.columns else "year"))
+
     pivot = df.pivot_table(
-        index="District",
-        columns="Month",
+        index=dist,
+        columns=time_c,
         values=outlier_col,
         aggfunc="sum",
         fill_value=0,
     )
 
-    month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    # Reindex columns to ensure 1-12 order
-    pivot = pivot.reindex(columns=range(1, 13), fill_value=0)
-    pivot.columns = month_names
+    if has_month:
+        month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        pivot = pivot.reindex(columns=range(1, 13), fill_value=0)
+        pivot.columns = month_names
+        title = "Seasonal Vulnerability Matrix: Outlier Frequency by Month & District"
+        xlabel = "Month of the Year"
+    else:
+        title = f"Temporal Anomaly Matrix: Outlier Frequency by {time_c.title()} & District"
+        xlabel = time_c.title()
 
     plt.figure(figsize=(12, 7))
     sns.heatmap(
@@ -288,8 +308,8 @@ def plot_seasonal_heatmap(
         cbar_kws={"label": "Anomaly Count"},
     )
 
-    plt.title("Seasonal Vulnerability Matrix: Outlier Frequency by Month & District")
-    plt.xlabel("Month of the Year")
+    plt.title(title)
+    plt.xlabel(xlabel)
     plt.ylabel("District")
     plt.tight_layout()
 

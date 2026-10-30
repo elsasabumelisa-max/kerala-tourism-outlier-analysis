@@ -1,9 +1,9 @@
 ,Outlier_ZScore,Outlier_ModZScore,Outlier_IQR_District,Outlier_IsolationForest,Outlier_LOF,Outlier_OneClassSVM,Outlier_EllipticEnvelope,Ensemble_Outlier
-Outlier_ZScore,1.0,0.538,0.188,0.086,0.048,0.012,0.0,0.106
-Outlier_ModZScore,0.538,1.0,0.19,0.16,0.056,0.011,0.0,0.197
-Outlier_IQR_District,0.188,0.19,1.0,0.134,0.148,0.011,0.0,0.182
-Outlier_IsolationForest,0.086,0.16,0.134,1.0,0.209,0.252,0.165,0.652
-Outlier_LOF,0.048,0.056,0.148,0.209,1.0,0.12,0.038,0.324
-Outlier_OneClassSVM,0.012,0.011,0.011,0.252,0.12,1.0,0.407,0.371
-Outlier_EllipticEnvelope,0.0,0.0,0.0,0.165,0.038,0.407,1.0,0.176
-Ensemble_Outlier,0.106,0.197,0.182,0.652,0.324,0.371,0.176,1.0
+Outlier_ZScore,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Outlier_ModZScore,0.0,1.0,0.0,0.25,0.364,0.312,0.071,0.615
+Outlier_IQR_District,0.0,0.0,1.0,0.0,0.0,0.1,0.0,0.1
+Outlier_IsolationForest,0.0,0.25,0.0,1.0,0.143,0.273,0.333,0.4
+Outlier_LOF,0.0,0.364,0.0,0.143,1.0,0.167,0.143,0.4
+Outlier_OneClassSVM,0.0,0.312,0.1,0.273,0.167,1.0,0.167,0.538
+Outlier_EllipticEnvelope,0.0,0.071,0.0,0.333,0.143,0.167,1.0,0.167
+Ensemble_Outlier,0.0,0.615,0.1,0.4,0.4,0.538,0.167,1.0

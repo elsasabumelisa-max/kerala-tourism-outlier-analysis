@@ -407,18 +407,28 @@ def plot_isolation_forest_visualizations(
     # -------------------------------------------------------------
     # Plot 1: Bivariate Scatter (Domestic vs. Foreign Tourists)
     # -------------------------------------------------------------
+    dom_col = next((c for c in ["Domestic_Tourists", "domestic"] if c in df.columns), None)
+    for_col = next((c for c in ["Foreign_Tourists", "foreign"] if c in df.columns), None)
+    tot_col = next((c for c in ["Total_Tourists", "total"] if c in df.columns), None)
+
+    num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+    if dom_col is None:
+        dom_col = num_cols[0] if num_cols else df.columns[0]
+    if for_col is None:
+        for_col = num_cols[1] if len(num_cols) > 1 else dom_col
+
     ax1 = axes[0, 0]
     ax1.scatter(
-        normal["Domestic_Tourists"] if "Domestic_Tourists" in normal.columns else normal["Total_Tourists"],
-        normal["Foreign_Tourists"] if "Foreign_Tourists" in normal.columns else normal.iloc[:, 0],
+        normal[dom_col],
+        normal[for_col],
         color="#2b7bba",
         alpha=0.6,
         s=35,
         label=f"Normal Observations (N={len(normal)})",
     )
     ax1.scatter(
-        outliers["Domestic_Tourists"] if "Domestic_Tourists" in outliers.columns else outliers["Total_Tourists"],
-        outliers["Foreign_Tourists"] if "Foreign_Tourists" in outliers.columns else outliers.iloc[:, 0],
+        outliers[dom_col],
+        outliers[for_col],
         color="#d9381e",
         alpha=0.9,
         s=70,
@@ -428,14 +438,14 @@ def plot_isolation_forest_visualizations(
         label=f"Detected Outliers (N={len(outliers)})",
         zorder=5,
     )
-    ax1.set_title("Domestic vs. Foreign Arrivals (Outliers Highlighted)", fontweight="bold")
-    ax1.set_xlabel("Domestic Tourists")
-    ax1.set_ylabel("Foreign Tourists")
+    ax1.set_title(f"{dom_col} vs. {for_col} (Outliers Highlighted)", fontweight="bold")
+    ax1.set_xlabel(dom_col)
+    ax1.set_ylabel(for_col)
     ax1.legend(loc="upper right", frameon=True)
     ax1.grid(True, linestyle="--", alpha=0.5)
 
     # -------------------------------------------------------------
-    # Plot 2: Hotel Occupancy vs Tourism Revenue
+    # Plot 2: Secondary Metric Relationship / Occupancy vs Revenue
     # -------------------------------------------------------------
     ax2 = axes[0, 1]
     if "Hotel_Occupancy_Rate" in df.columns and "Tourism_Revenue_Cr" in df.columns:
@@ -464,47 +474,75 @@ def plot_isolation_forest_visualizations(
         ax2.set_ylabel("Tourism Revenue (₹ Crores)")
         ax2.legend(loc="upper left", frameon=True)
         ax2.grid(True, linestyle="--", alpha=0.5)
+    elif "foreign_ratio" in df.columns and tot_col is not None:
+        ax2.scatter(
+            normal[tot_col],
+            normal["foreign_ratio"],
+            color="#2a9d8f",
+            alpha=0.6,
+            s=35,
+            label="Normal",
+        )
+        ax2.scatter(
+            outliers[tot_col],
+            outliers["foreign_ratio"],
+            color="#e76f51",
+            alpha=0.9,
+            s=70,
+            marker="s",
+            edgecolor="black",
+            linewidth=0.8,
+            label="Outlier",
+            zorder=5,
+        )
+        ax2.set_title(f"{tot_col} vs. Foreign Ratio", fontweight="bold")
+        ax2.set_xlabel(tot_col)
+        ax2.set_ylabel("Foreign Ratio")
+        ax2.legend(loc="upper right", frameon=True)
+        ax2.grid(True, linestyle="--", alpha=0.5)
     else:
-        # Fallback feature scatter
-        ax2.text(0.5, 0.5, "Revenue/Occupancy not in dataset", ha="center", va="center")
+        ax2.text(0.5, 0.5, "Secondary features not available", ha="center", va="center")
 
     # -------------------------------------------------------------
     # Plot 3: Time Series Trajectory with Outlier Markers
     # -------------------------------------------------------------
     ax3 = axes[1, 0]
-    if "Date" in df.columns:
-        df_sorted = df.copy()
-        df_sorted["Date"] = pd.to_datetime(df_sorted["Date"])
-        df_sorted = df_sorted.sort_values(by="Date")
+    time_col = next((c for c in ["Date", "date", "Year", "year"] if c in df.columns), None)
+    val_col = tot_col if tot_col else dom_col
 
-        # Plot total state arrivals by month
-        monthly_total = df_sorted.groupby("Date")["Total_Tourists"].sum().reset_index()
-        monthly_outlier = df_sorted[df_sorted["is_outlier"] == 1].groupby("Date")["Total_Tourists"].sum().reset_index()
+    if time_col and val_col:
+        df_sorted = df.copy()
+        if "date" in time_col.lower():
+            df_sorted[time_col] = pd.to_datetime(df_sorted[time_col])
+        df_sorted = df_sorted.sort_values(by=time_col)
+
+        timeline_agg = df_sorted.groupby(time_col)[val_col].sum().reset_index()
+        outlier_agg = df_sorted[df_sorted["is_outlier"] == 1].groupby(time_col)[val_col].sum().reset_index()
 
         ax3.plot(
-            monthly_total["Date"],
-            monthly_total["Total_Tourists"],
+            timeline_agg[time_col],
+            timeline_agg[val_col],
             color="#1d3557",
             linewidth=1.8,
-            label="Total State Arrivals",
+            label=f"Total Footfalls ({val_col})",
         )
         ax3.scatter(
-            monthly_outlier["Date"],
-            monthly_outlier["Total_Tourists"],
+            outlier_agg[time_col],
+            outlier_agg[val_col],
             color="#e63946",
             s=65,
             marker="o",
             edgecolor="black",
             zorder=5,
-            label="Anomalous Months (Outliers)",
+            label="Anomalous Records (Outliers)",
         )
-        ax3.set_title("Timeline: Monthly Tourist Arrivals & Outlier Markers", fontweight="bold")
-        ax3.set_xlabel("Timeline")
-        ax3.set_ylabel("Monthly Total Tourists")
+        ax3.set_title(f"Timeline: Tourist Arrivals & Outlier Markers ({time_col})", fontweight="bold")
+        ax3.set_xlabel(str(time_col).title())
+        ax3.set_ylabel(f"Total Tourists ({val_col})")
         ax3.legend(loc="upper right", frameon=True)
         ax3.grid(True, linestyle="--", alpha=0.5)
     else:
-        ax3.text(0.5, 0.5, "Date column not available", ha="center", va="center")
+        ax3.text(0.5, 0.5, "Time series column not available", ha="center", va="center")
 
     # -------------------------------------------------------------
     # Plot 4: Anomaly Score Distribution

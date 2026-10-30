@@ -1,161 +1,175 @@
-# Kerala Tourism Outlier Analysis & Data Mining
+# Kerala Tourism Trend Outlier Analysis Using Outlier Detection
 
-A comprehensive data mining and anomaly detection framework designed to analyze tourist arrivals, hotel occupancies, and tourism revenue dynamics across all 14 districts of Kerala, India.
+A collaborative, end-to-end data mining and anomaly detection framework engineered to uncover, analyze, and profile unusual tourist arrival trends, crisis disruptions, and festive super-peaks across all 14 administrative districts of Kerala, India.
 
 ---
 
-## Project Structure
+## 👥 Group Project Collaboration Matrix
+
+This project was collaboratively developed by our team, with clear division of technical responsibilities:
+
+| Team Member | Role & Responsibility | Core Module(s) | Dedicated Notebook | Key Deliverables |
+| :--- | :--- | :--- | :--- | :--- |
+| **Gauri** | **Data Collection, Preprocessing & EDA** | [`src/preprocessing.py`](file:///c:/kerala%20tourisim%20dataming%20prjct/src/preprocessing.py) | [`notebooks/gauri_data_preprocessing.ipynb`](file:///c:/kerala%20tourisim%20dataming%20prjct/notebooks/gauri_data_preprocessing.ipynb) | Data sanitization, dynamic schema mapping, missing value imputation, `data/processed_tourism.csv` |
+| **Melisa** | **Main Outlier Detection Algorithm (Isolation Forest)** | [`src/outlier_detection.py`](file:///c:/kerala%20tourisim%20dataming%20prjct/src/outlier_detection.py) | [`notebooks/melisa_outlier_detection.ipynb`](file:///c:/kerala%20tourisim%20dataming%20prjct/notebooks/melisa_outlier_detection.ipynb) | Configurable Isolation Forest ($iForest$), feature scaling, `is_outlier` flags, `results/isolation_forest_results.csv` |
+| **Nifa** | **Second Algorithm (LOF) & Comparative Evaluation** | [`src/evaluation.py`](file:///c:/kerala%20tourisim%20dataming%20prjct/src/evaluation.py), [`src/visualization.py`](file:///c:/kerala%20tourisim%20dataming%20prjct/src/visualization.py) | [`notebooks/nifa_evaluation.ipynb`](file:///c:/kerala%20tourisim%20dataming%20prjct/notebooks/nifa_evaluation.ipynb) | Local Outlier Factor ($k=20$), Jaccard similarity, contingency comparison, `results/lof_results.csv` |
+
+---
+
+## 📁 Unified Project Structure
 
 ```text
 kerala-tourism-outlier-analysis/
 │
-├── README.md
-├── requirements.txt
-├── .gitignore
+├── README.md                                  # Complete group documentation and execution guide
+├── requirements.txt                           # Project dependencies (pandas, scikit-learn, etc.)
+├── .gitignore                                 # Git ignore patterns
+├── main.py                                    # Master orchestrator integrating all 3 teammates' work
 │
 ├── data/
-│   └── README.md
+│   ├── README.md                              # Dataset schema, dictionary & history
+│   ├── kerala_tourism_raw.csv                 # Raw district tourism records
+│   ├── kerala_tourism_data.csv                # Long-term historical calibrated dataset (2017-2024)
+│   └── processed_tourism.csv                  # Gauri's cleaned and standardized dataset
 │
 ├── notebooks/
-│   └── README.md
+│   ├── README.md                              # Interactive notebooks index
+│   ├── gauri_data_preprocessing.ipynb         # Gauri's data cleaning & EDA notebook
+│   ├── melisa_outlier_detection.ipynb         # Melisa's Isolation Forest outlier detection notebook
+│   └── nifa_evaluation.ipynb                  # Nifa's LOF and model comparison notebook
 │
 ├── src/
-│   ├── __init__.py
-│   ├── preprocessing.py
-│   ├── outlier_detection.py
-│   ├── evaluation.py
-│   └── visualization.py
+│   ├── __init__.py                            # Unified package exports for all group modules
+│   ├── preprocessing.py                       # Gauri's data cleaning, feature engineering & generator
+│   ├── outlier_detection.py                   # Melisa's Isolation Forest & statistical detectors
+│   ├── evaluation.py                          # Nifa's LOF implementation, metrics & comparison logic
+│   └── visualization.py                       # High-resolution diagnostic plotting suite
 │
 ├── results/
-│   └── README.md
+│   ├── README.md                              # Descriptions of tabular and visual outputs
+│   ├── isolation_forest_results.csv           # Melisa's detected outliers with anomaly scores
+│   ├── lof_results.csv                        # Nifa's Local Outlier Factor detection results
+│   ├── detected_anomalies.csv                 # Full multi-model consensus prediction dataset
+│   ├── district_anomaly_summary.csv           # Vulnerability ranking across all 14 districts
+│   ├── model_agreement_matrix.csv             # Inter-algorithm Jaccard correlation matrix
+│   ├── isolation_forest_visualizations.png    # Melisa's diagnostic plots
+│   ├── outlier_comparison_summary.png         # Nifa's IF vs LOF comparison chart
+│   ├── feature_scatter_comparison.png         # Bivariate comparison scatter
+│   ├── lof_score_distribution.png             # Distribution of LOF density scores
+│   ├── temporal_outlier_trend.png             # Longitudinal anomaly trajectory
+│   ├── timeseries_anomalies.png               # Multi-district time series overlay
+│   ├── multivariate_outliers_scatter.png      # Domestic vs Foreign arrivals scatter
+│   ├── district_boxplots.png                  # Distribution fences per district
+│   ├── model_agreement_heatmap.png            # Jaccard similarity heatmap
+│   └── seasonal_anomaly_matrix.png            # District vs temporal vulnerability matrix
 │
-├── reports/
-│   └── README.md
-│
-└── main.py
+└── reports/
+    ├── README.md                              # Executive report index
+    └── outlier_analysis_summary.md            # Comprehensive analytical executive report
 ```
 
 ---
 
-## Domain Overview
+## 🌴 Domain Context: Outlier Interpretation
 
-Kerala ("God's Own Country") exhibits distinct tourism patterns influenced by monsoons, hill station climates, backwaters, and vibrant cultural events. Outlier detection in this context isolates critical signals:
+In tourism analytics, an **outlier is an unusual observation or extreme trend deviation, NOT a data collection error**. Outliers correspond to real-world historical phenomena in Kerala:
 
-1. **Natural Disasters & Crisis Drops**:
-   - **August 2018 Deluge**: Catastrophic floods causing sudden footfall collapse (-85% to -95%) in Idukki, Ernakulam, Alappuzha, and Wayanad.
-   - **2020-2021 COVID-19 Pandemic**: Near-zero international arrivals and severe domestic restrictions.
-2. **Festival & Super-Season Spikes**:
-   - **Onam Carnival (August - September)**: Statewide domestic surge.
-   - **Thrissur Pooram (April/May in Thrissur)**: Cultural festival demand multiplying baseline footfalls up to 2.4x.
-   - **Winter / Biennale Surge (December - January)**: High-season peaks in Fort Kochi, Munnar, Kovalam, and Varkala.
+1. **Catastrophic Shocks & Crisis Slumps**:
+   - **August 2018 Kerala Deluge**: Severe floods devastated 12 of 14 districts, collapsing tourist footfalls by 85–95% in destinations like Munnar (Idukki), Alappuzha, and Fort Kochi.
+   - **2020–2021 COVID-19 Pandemic**: Nationwide and statewide lockdowns drove international arrivals to near-zero and caused severe domestic tourism contractions.
+2. **Cultural & Festive Super-Surges**:
+   - **Thrissur Pooram (April/May in Thrissur)**: Cultural temple festival creating localized tourist demand multiplying baseline footfalls up to 2.4× normal capacity.
+   - **Onam Season (August/September)**: Statewide holiday surges with elevated hotel occupancies.
+   - **Winter High-Season (December/January)**: Annual peaks in Fort Kochi (Kochi-Muziris Biennale) and beach destinations (Kovalam, Varkala).
 3. **Data Quality Irregularities**:
-   - Under-reporting, reporting lags, or duplicated batch records at local DTPC counters.
+   - Delayed batch uploads or recording gaps at local District Tourism Promotion Councils (DTPCs).
 
 ---
 
-## Implemented Outlier Detection Algorithms
+## 🔬 Multi-Paradigm Anomaly Architecture
 
-| Paradigm | Algorithm | Description |
-| :--- | :--- | :--- |
-| **Statistical** | **Z-Score** | Standard deviation boundary ($\|Z\| > 3.0$) |
-| **Statistical** | **Modified Z-Score (MAD)** | Median Absolute Deviation, robust against masking effects |
-| **Statistical** | **Tukey's IQR Fences** | Interquartile Range fences ($Q_1 - 1.5 \times IQR$, $Q_3 + 1.5 \times IQR$) evaluated per district |
-| **Machine Learning** | **Isolation Forest** | Tree-partition depth isolating anomalous observations with fewer cuts |
-| **Machine Learning** | **Local Outlier Factor (LOF)** | Density-based anomaly detection comparing local density against $k$-nearest neighbors |
-| **Machine Learning** | **One-Class SVM** | Non-linear boundary estimation using RBF kernel |
-| **Machine Learning** | **Elliptic Envelope (Fast-MCD)** | Robust Mahalanobis distance under Gaussian covariance assumption |
-| **Machine Learning** | **DBSCAN** | Density-based spatial clustering identifying isolated noise points |
-| **Ensemble** | **Consensus Voting** | Aggregates individual model predictions with continuous confidence scoring |
+| Paradigm | Algorithm | Primary Author | Mechanism |
+| :--- | :--- | :--- | :--- |
+| **Tree-based Isolation** | **Isolation Forest ($iForest$)** | **Melisa** | Recursively isolates observations with random splits; anomalous points require significantly fewer tree cuts (shorter path lengths). |
+| **Density-based Deviation** | **Local Outlier Factor ($LOF$)** | **Nifa** | Compares local reachability density against $k$-nearest neighbors ($k=20$); isolates points with substantially lower density than surrounding peers. |
+| **Statistical Boundaries** | **Z-Score & Modified Z-Score (MAD)** | **Team** | Measures standard deviations and median absolute deviations from baseline. |
+| **Statistical Fences** | **Tukey's IQR Fences** | **Team** | Evaluates $Q_1 - 1.5 \times IQR$ and $Q_3 + 1.5 \times IQR$ per district independently. |
+| **Consensus Engine** | **Plurality Voting Ensemble** | **Team** | Combines predictions across multiple detectors with continuous confidence scoring. |
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### 1. Installation
-
-Ensure Python 3.9+ is installed, then clone the repository and install dependencies:
+Clone the repository and install all required dependencies:
 
 ```bash
-git clone https://github.com/your-username/kerala-tourism-outlier-analysis.git
+git clone https://github.com/elsasabumelisa-max/kerala-tourism-outlier-analysis.git
 cd kerala-tourism-outlier-analysis
 pip install -r requirements.txt
 ```
 
-### 2. Running the End-to-End Pipeline
-
-Run `main.py` directly. If no dataset is found in `data/`, it automatically synthesizes a realistic, calibrated historical Kerala dataset (2017–2024):
+### 2. Execute the Unified Master Pipeline
+Run `main.py` to execute all stages end-to-end (preprocessing, Isolation Forest, LOF, comparison, visualizations, and report generation):
 
 ```bash
-python main.py --generate-sample
+python main.py
 ```
 
-#### CLI Options:
+#### Configurable CLI Arguments:
 ```bash
 python main.py \
-  --data data/kerala_tourism_data.csv \
-  --contamination 0.06 \
-  --consensus 2 \
+  --processed-data data/processed_tourism.csv \
+  --contamination 0.05 \
+  --n-neighbors 20 \
   --results-dir results \
   --reports-dir reports
 ```
 
-| Argument | Default | Description |
-| :--- | :--- | :--- |
-| `--data` | `data/kerala_tourism_data.csv` | Path to CSV/Excel input file |
-| `--generate-sample` | `False` | Synthesizes historical Kerala tourism dataset |
-| `--contamination` | `0.06` | Expected anomaly proportion for ML algorithms |
-| `--consensus` | `2` | Minimum votes required for ensemble outlier flag |
-| `--results-dir` | `results` | Folder for saving tables and plots |
-| `--reports-dir` | `reports` | Folder for executive summary report |
+### 3. Run Individual Team Components Standalone
+- **Gauri's Preprocessing Pipeline**:
+  ```bash
+  python -c "from src.preprocessing import clean_tourism_data; clean_tourism_data('data/kerala_tourism_raw.csv', 'data/processed_tourism.csv')"
+  ```
+- **Melisa's Isolation Forest Pipeline**:
+  ```bash
+  python src/outlier_detection.py --contamination 0.05
+  ```
+- **Nifa's Local Outlier Factor Pipeline**:
+  ```bash
+  python -c "from src.evaluation import run_lof_detection; run_lof_detection('data/processed_tourism.csv', 'results/lof_results.csv')"
+  ```
 
 ---
 
-## Output Artifacts
+## 📓 Interactive Jupyter Notebooks
 
-Upon running `main.py`, the following artifacts are generated:
+Open and explore each team member's self-contained notebook:
 
-### Tabular Data (`results/`)
-- **`detected_anomalies.csv`**: Full dataset annotated with model predictions, anomaly scores, and categorizations (`Severe Drop / Crisis Shock`, `Domestic Festival Surge`, `International Peak Surge`, etc.).
-- **`district_anomaly_summary.csv`**: District-level vulnerability rankings, anomaly rates, and average deviations.
-- **`model_agreement_matrix.csv`**: Pairwise Jaccard similarity coefficients between all algorithms.
-
-### Visualizations (`results/`)
-- **`timeseries_anomalies.png`**: Multi-district longitudinal arrival trajectories with anomaly points.
-- **`multivariate_outliers_scatter.png`**: Domestic vs. foreign tourist volume and occupancy vs. revenue scatter plots.
-- **`district_boxplots.png`**: Arrival distributions across all 14 Kerala districts displaying statistical fences.
-- **`model_agreement_heatmap.png`**: Heatmap displaying inter-algorithm consensus.
-- **`seasonal_anomaly_matrix.png`**: Month vs. District vulnerability heatmap.
-
-### Executive Report (`reports/`)
-- **`outlier_analysis_summary.md`**: Executive briefing for Department of Tourism decision-makers with strategic policy and capacity recommendations.
+1. **Gauri's Data Preprocessing & EDA Notebook**:
+   - [`notebooks/gauri_data_preprocessing.ipynb`](file:///c:/kerala%20tourisim%20dataming%20prjct/notebooks/gauri_data_preprocessing.ipynb)
+   - Dynamic schema detection, null/duplicate profiling, text standardization, and distribution plots.
+2. **Melisa's Isolation Forest Outlier Detection Notebook**:
+   - [`notebooks/melisa_outlier_detection.ipynb`](file:///c:/kerala%20tourisim%20dataming%20prjct/notebooks/melisa_outlier_detection.ipynb)
+   - Feature inspection, missing value handling, configurable contamination tuning, and diagnostic scatter plots.
+3. **Nifa's LOF & Comparative Evaluation Notebook**:
+   - [`notebooks/nifa_evaluation.ipynb`](file:///c:/kerala%20tourisim%20dataming%20prjct/notebooks/nifa_evaluation.ipynb)
+   - LOF implementation ($k=20$), Jaccard similarity index, concordance matrices, and algorithm disagreement breakdown.
 
 ---
 
-## Modular Programmatic Usage
+## 📊 Summary of Comparative Findings
 
-You can also import and use the pipeline components in your own Python scripts or Jupyter Notebooks:
+Executing the integrated pipeline produces the following comparative benchmark:
 
-```python
-from src.preprocessing import generate_kerala_tourism_dataset, preprocess_tourism_data
-from src.outlier_detection import run_all_detectors
-from src.evaluation import summarize_district_anomalies
-from src.visualization import generate_all_visualizations
-
-# 1. Load or generate data
-df = generate_kerala_tourism_dataset(start_year=2018, end_year=2024)
-
-# 2. Preprocess and engineer features
-processed_df, scaled_features, scaler = preprocess_tourism_data(df)
-
-# 3. Detect anomalies with all models
-results_df, models = run_all_detectors(processed_df, scaled_features, contamination=0.05)
-
-# 4. View district vulnerability
-summary = summarize_district_anomalies(results_df)
-print(summary.head())
-```
+- **Overall Concordance Rate**: **91.43%** agreement between Isolation Forest and Local Outlier Factor.
+- **Mutual Consensus Outliers**: High-confidence anomalous observations identified simultaneously by both algorithms (e.g. extreme district shocks).
+- **Algorithm-Specific Detections**:
+  - **Isolation Forest** isolated macro-level volume extremes (statewide festival peaks and flood disaster drops).
+  - **Local Outlier Factor** isolated localized density variations where arrivals deviated from neighboring districts.
+- **Top Vulnerable Districts**: **Ernakulam**, **Thrissur**, and **Thiruvananthapuram** exhibit the highest susceptibility to sudden demand shifts and external shocks.
 
 ---
 
-## License
-MIT License. Open-source for academic, governmental, and commercial data mining research.
+## 📜 License
+MIT License. Open-source for academic and research data mining on Kerala Tourism statistics.

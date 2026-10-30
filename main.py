@@ -1,75 +1,114 @@
 """
-Kerala Tourism Outlier Analysis Pipeline
-=========================================
-Main CLI orchestration script that handles data ingestion, feature engineering,
-multi-algorithm anomaly detection, model evaluation, visualization generation,
-and comprehensive reporting for Kerala Tourism analytics.
+Kerala Tourism Trend Outlier Analysis Using Outlier Detection
+=============================================================
+Unified Master Execution Pipeline
+
+Group Members & Contributions:
+------------------------------
+- Gauri:  Data Collection, Preprocessing & EDA (`src/preprocessing.py`)
+- Melisa: Primary Outlier Detection - Isolation Forest (`src/outlier_detection.py`)
+- Nifa:   Second Algorithm - Local Outlier Factor & Evaluation (`src/evaluation.py`, `src/visualization.py`)
+
+This master script coordinates the end-to-end data mining workflow:
+  Stage 1 -> Data Preprocessing & Sanitization (Gauri)
+  Stage 2 -> Primary Outlier Detection via Isolation Forest (Melisa)
+  Stage 3 -> Density-based Outlier Detection via Local Outlier Factor (Nifa)
+  Stage 4 -> Algorithm Comparison, Jaccard Similarity & Consensus Profiling (Nifa & Melisa)
+  Stage 5 -> Visual Analytics & Diagnostic Chart Generation (Team)
+  Stage 6 -> Comprehensive Executive Report Synthesis (Team)
 """
 
 import os
 import sys
 import argparse
 from datetime import datetime
-import pandas as pd
+from typing import Dict, Any, List, Optional
 import numpy as np
+import pandas as pd
 
-# Ensure root directory is on the python path
+# Ensure project root is available on sys.path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from src.preprocessing import (
     load_tourism_data,
     preprocess_tourism_data,
+    clean_tourism_data,
     generate_kerala_tourism_dataset,
     DISTRICTS,
 )
-from src.outlier_detection import run_all_detectors
+from src.outlier_detection import (
+    detect_outliers_isolation_forest,
+    plot_isolation_forest_visualizations,
+    run_all_detectors,
+)
 from src.evaluation import (
+    run_lof_detection,
+    compare_outlier_algorithms,
     compute_model_agreement,
-    summarize_district_anomalies,
     categorize_anomalies,
+    summarize_district_anomalies,
     evaluate_outliers,
 )
-from src.visualization import generate_all_visualizations
+from src.visualization import (
+    generate_all_visualizations,
+    plot_comparison_summary,
+    plot_feature_scatter_comparison,
+    plot_lof_score_distribution,
+    plot_temporal_outlier_trend,
+)
 
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Kerala Tourism Outlier Analysis & Data Mining Framework"
+        description="Unified Kerala Tourism Trend Outlier Analysis Pipeline"
     )
     parser.add_argument(
-        "--data",
+        "--raw-data",
         type=str,
         default="data/kerala_tourism_data.csv",
-        help="Path to the Kerala tourism dataset (CSV/Excel).",
+        help="Path to initial raw or benchmark Kerala tourism dataset.",
     )
     parser.add_argument(
-        "--generate-sample",
-        action="store_true",
-        help="Generate a realistic calibrated Kerala tourism dataset (2017-2024).",
+        "--processed-data",
+        type=str,
+        default="data/processed_tourism.csv",
+        help="Path for Gauri's cleaned and standardized dataset.",
+    )
+    parser.add_argument(
+        "--if-results",
+        type=str,
+        default="results/isolation_forest_results.csv",
+        help="Destination path for Melisa's Isolation Forest results.",
+    )
+    parser.add_argument(
+        "--lof-results",
+        type=str,
+        default="results/lof_results.csv",
+        help="Destination path for Nifa's Local Outlier Factor results.",
     )
     parser.add_argument(
         "--contamination",
         type=float,
-        default=0.06,
-        help="Expected proportion of outliers in the data (default: 0.06).",
+        default=0.05,
+        help="Configurable contamination rate for outlier detectors (default: 0.05).",
     )
     parser.add_argument(
-        "--consensus",
+        "--n-neighbors",
         type=int,
-        default=2,
-        help="Minimum number of model votes required for ensemble outlier flag (default: 2).",
+        default=20,
+        help="Neighbor count parameter for Local Outlier Factor (default: 20).",
     )
     parser.add_argument(
         "--results-dir",
         type=str,
         default="results",
-        help="Directory to save tabular outputs and visualization plots.",
+        help="Directory to save tabular outputs and plots (default: 'results').",
     )
     parser.add_argument(
         "--reports-dir",
         type=str,
         default="reports",
-        help="Directory to save analytical markdown reports.",
+        help="Directory to save analytical reports (default: 'reports').",
     )
     return parser.parse_args()
 
@@ -79,7 +118,6 @@ def _df_to_markdown(df: pd.DataFrame) -> str:
     try:
         return df.to_markdown(index=False)
     except Exception:
-        # Fallback if tabulate is unavailable
         headers = list(df.columns)
         header_row = "| " + " | ".join(str(h) for h in headers) + " |"
         separator = "| " + " | ".join("---" for _ in headers) + " |"
@@ -90,144 +128,245 @@ def _df_to_markdown(df: pd.DataFrame) -> str:
         return "\n".join([header_row, separator] + rows)
 
 
-def generate_executive_report(
+def generate_unified_executive_report(
     summary_df: pd.DataFrame,
-    eval_results: dict,
+    comparison_summary: Dict[str, Any],
+    eval_results: Dict[str, Any],
     anomalies_df: pd.DataFrame,
     report_path: str,
 ):
     """
-    Synthesizes and writes an executive analytical report highlighting
-    temporal crisis shocks, festive super-peaks, district vulnerabilities,
-    and strategic recommendations for Kerala Tourism stakeholders.
+    Synthesizes and writes an executive analytical report combining findings
+    from Gauri (data preprocessing), Melisa (Isolation Forest), and Nifa (LOF & Evaluation).
     """
     total_records = len(anomalies_df)
-    ensemble_anomalies = anomalies_df[anomalies_df["Ensemble_Outlier"] == 1]
-    n_outliers = len(ensemble_anomalies)
-    outlier_pct = (n_outliers / total_records * 100) if total_records > 0 else 0
+    n_if = int(comparison_summary.get("if_outliers_count", 0))
+    n_lof = int(comparison_summary.get("lof_outliers_count", 0))
+    n_both = int(comparison_summary.get("both_outliers_count", 0))
+    jaccard = comparison_summary.get("jaccard_similarity", 0.0)
+    concordance = comparison_summary.get("concordance_rate_pct", 0.0)
 
-    category_counts = ensemble_anomalies["Anomaly_Category"].value_counts().to_dict()
+    category_counts = anomalies_df["Anomaly_Category"].value_counts().to_dict() if "Anomaly_Category" in anomalies_df.columns else {}
+    top_vulnerable = summary_df.head(3)["District"].tolist() if "District" in summary_df.columns else []
 
-    top_vulnerable = summary_df.head(3)["District"].tolist()
-
-    report_content = f"""# Kerala Tourism Outlier Analysis & Anomaly Mining Report
+    report_content = f"""# Kerala Tourism Trend Outlier Analysis - Executive Final Report
 
 **Generated:** {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}  
-**Scope:** 14 Districts of Kerala | Temporal Coverage: {anomalies_df['Date'].dt.year.min()} - {anomalies_df['Date'].dt.year.max()}  
-**Total Records Analyzed:** {total_records:,}  
-**Consensus Anomalies Flagged:** {n_outliers:,} ({outlier_pct:.2f}% of total records)  
+**Project:** Kerala Tourism Trend Outlier Analysis Using Outlier Detection  
+**Team Members & Roles:**
+- **Gauri:** Data Collection, Preprocessing & Exploratory Data Analysis (`src/preprocessing.py`)
+- **Melisa:** Primary Outlier Detection - Isolation Forest (`src/outlier_detection.py`)
+- **Nifa:** Second Algorithm - Local Outlier Factor (LOF) & Comparative Evaluation (`src/evaluation.py`, `src/visualization.py`)
+
+**Scope:** 14 Districts of Kerala | Total Records Analyzed: {total_records:,}  
 
 ---
 
-## 1. Executive Summary
-This data mining initiative applies multi-paradigm anomaly detection (Statistical Fences, Isolation Forest, Local Outlier Factor, One-Class SVM, and Ensemble Voting) to Kerala tourism footfall and revenue records. By screening extreme variance from normal seasonal cycles, the system isolates high-impact disruptions, super-peak surges, and reporting discrepancies across Kerala's 14 administrative districts.
+## 1. Executive Summary & Problem Formulation
+Tourism in Kerala ("God's Own Country") exhibits complex dynamics driven by tropical monsoons, mountain geography, backwater ecosystems, and rich cultural traditions. This project establishes an unsupervised data mining pipeline to identify, profile, and interpret statistical outliers in monthly tourism footfalls and revenues across all 14 administrative districts of Kerala.
 
-### Key Headline Metrics:
-- **Total Anomalous Months Flagged:** `{n_outliers}`
-- **Severe Crisis Shocks Detected:** `{category_counts.get('Severe Drop / Crisis Shock', 0)}` (e.g., August 2018 floods, 2020 pandemic lockdowns)
-- **Holiday & Festival Surges:** `{category_counts.get('Domestic Festival / Holiday Surge', 0)}` (e.g., Onam, Thrissur Pooram)
-- **International Peak Surges:** `{category_counts.get('International Peak Surge', 0)}` (e.g., Winter high-season & Biennale)
-- **Top 3 Most Volatile Districts:** {', '.join(top_vulnerable)}
+### Core Domain Principle:
+In this study, an **outlier is a statistically unusual observation or severe trend shock, NOT a data collection error**. Outliers correspond to real-world phenomena:
+1. **Catastrophic Disruption Shocks:** The historic **August 2018 Kerala Deluge/Floods** caused tourist arrivals to collapse by 85–95% across 12 affected districts (especially Idukki, Alappuzha, Ernakulam, and Wayanad).
+2. **Pandemic Disruptions:** The **2020–2021 COVID-19 pandemic** generated prolonged periods of near-zero foreign arrivals and sharp domestic contractions.
+3. **Festive Super-Surges:** Annual cultural celebrations such as **Thrissur Pooram (April in Thrissur)** and statewide **Onam (August/September)** multiply baseline arrivals up to 2.4× normal capacity.
 
 ---
 
-## 2. Multi-Model Detection Performance Benchmark
+## 2. Multi-Algorithm Detection & Model Comparison
 
-"""
-    if "Model_Metrics" in eval_results and not eval_results["Model_Metrics"].empty:
-        report_content += _df_to_markdown(eval_results["Model_Metrics"])
-    else:
-        report_content += "*Unsupervised execution without pre-labeled ground truth.*"
+Two distinct unsupervised anomaly detection paradigms were implemented and contrasted:
+- **Isolation Forest (Melisa):** Global tree-based isolation partitioning. Points isolated with few random cuts are flagged as anomalies.
+- **Local Outlier Factor / LOF (Nifa):** Density-based outlier detection comparing local reachability density against $k$-nearest neighbors ($k=20$).
 
-    report_content += f"""
+### Comparison Summary Metrics:
+| Metric | Value | Interpretation |
+| :--- | :--- | :--- |
+| **Total Observations Screened** | `{total_records:,}` | Full monthly dataset across all 14 districts |
+| **Isolation Forest Outliers (Melisa)** | `{n_if:,}` ({comparison_summary.get('if_outliers_pct', 0)}%) | Global volume surges and disaster collapses |
+| **Local Outlier Factor Outliers (Nifa)** | `{n_lof:,}` ({comparison_summary.get('lof_outliers_pct', 0)}%) | Local density variations relative to peer neighbors |
+| **Mutual Consensus Outliers (Both)** | `{n_both:,}` ({comparison_summary.get('both_outliers_pct', 0)}%) | High-confidence anomalies confirmed by both models |
+| **Jaccard Similarity Index** | `{jaccard:.4f}` | Overlap ratio: $|IF \\cap LOF| / |IF \\cup LOF|$ |
+| **Overall Concordance Rate** | `{concordance:.2f}%` | Percentage of observations where both models agree |
+
+> **Methodological Note:** Because this is an unsupervised anomaly detection task without ground truth, supervised metrics (Precision, Recall, F1) treating one model as truth are methodologically invalid. Agreement reflects complementary algorithmic viewpoints: LOF captures local density deviations, while Isolation Forest isolates global volume deviations.
 
 ---
 
 ## 3. District Vulnerability & Anomaly Prevalence Ranking
 
-The table below summarizes anomaly frequency and character per district:
+Summary of detected anomalies across Kerala's 14 administrative districts:
 
 {_df_to_markdown(summary_df)}
 
+### Top 3 Volatile Districts:
+**{', '.join(top_vulnerable)}** exhibit the highest vulnerability to external shocks and demand surges, driven by high dependence on international leisure tourism and major festival hosting.
+
 ---
 
-## 4. Inlier vs. Outlier Operational Profile
+## 4. Inlier vs. Outlier Operational Profiles
 
-Comparative operational parameters illustrating the scale of deviation in tourist volume, hotel occupancy, and tourism revenue:
+Comparative statistics highlighting the magnitude of operational shifts between normal periods and anomalous months:
 
 """
     if "Profile_Comparison" in eval_results and not eval_results["Profile_Comparison"].empty:
         report_content += _df_to_markdown(eval_results["Profile_Comparison"])
+    else:
+        report_content += "*Statistical profile generated from model predictions.*"
 
     report_content += f"""
 
 ---
 
-## 5. Strategic Recommendations for Kerala Tourism Department
+## 5. Strategic Recommendations for Kerala Tourism Stakeholders
 
-1. **Disaster Resilience & Early Recovery Protocols**:
-   - Analysis shows dramatic collapse during the **August 2018 Floods** and **2020 Lockdowns** in riverine and highland districts (*Alappuzha, Idukki, Ernakulam, Wayanad*).
-   - Establish contingency tourist safety registries and post-monsoon rehabilitation subsidies to accelerate recovery during off-season shocks.
-
-2. **Managing Festival & Super-Season Congestion**:
-   - Cultural peaks such as **Thrissur Pooram (April in Thrissur)** and **Onam (August-September statewide)** experience up to **2.4x baseline demand**, stressing local hotel capacity and transportation.
-   - Implement dynamic inter-district tourist dispersal initiatives (e.g., promoting northern circuit gems like Kasaragod and Kannur during southern peak periods).
-
-3. **Data Quality & Reporting Assurance**:
-   - Detection of reporting outliers indicates occasional batch upload delays or single-month zero-logging. Implement automated telemetry verification at district tourism information offices (DTPCs).
+1. **Disaster Resilience & Relief Triggers**:
+   - Riverine and highland districts (*Alappuzha, Idukki, Wayanad*) require automated tourism relief triggers when multi-model anomaly detection confirms footfalls drop below 20% of median baseline.
+2. **Festival Crowd Management & Capacity Planning**:
+   - Severe positive surges during **Thrissur Pooram** and **Onam** necessitate dynamic inter-district tourist redistribution towards northern circuits (*Kannur, Kasaragod*) to alleviate infrastructure strain.
+3. **Data Quality & Automated Telemetry**:
+   - Establish digital telemetry interfaces at District Tourism Promotion Councils (DTPCs) to eliminate rare data-reporting gaps and duplicate batch uploads.
 
 ---
-*Report generated automatically by Kerala Tourism Outlier Mining System.*
+*Generated by the Unified Kerala Tourism Outlier Mining Framework (Gauri, Melisa, Nifa).*
 """
 
     os.makedirs(os.path.dirname(report_path), exist_ok=True)
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(report_content)
-    print(f"[Report] Executive analysis saved to: {report_path}")
+    print(f"[Report] Unified executive analytical report saved to: {report_path}")
 
 
 def main():
-    print("=" * 70)
-    print("   KERALA TOURISM OUTLIER ANALYSIS & DATA MINING FRAMEWORK")
-    print("=" * 70)
+    print("=" * 72)
+    print("   KERALA TOURISM TREND OUTLIER ANALYSIS USING OUTLIER DETECTION")
+    print("   Unified Group Project Pipeline: Gauri, Melisa, Nifa")
+    print("=" * 72)
 
     args = parse_arguments()
+    os.makedirs(args.results_dir, exist_ok=True)
+    os.makedirs(args.reports_dir, exist_ok=True)
 
-    # Step 1: Ensure dataset availability
-    if args.generate_sample or not os.path.exists(args.data):
-        print(f"\n[Step 1] Dataset not found at '{args.data}' or sample requested.")
-        print("          Synthesizing realistic calibrated Kerala Tourism dataset (2017-2024)...")
-        generate_kerala_tourism_dataset(
-            start_year=2017,
-            end_year=2024,
-            save_path=args.data,
+    # -------------------------------------------------------------------------
+    # STAGE 1: GAURI'S DATA PREPROCESSING & SANITIZATION PIPELINE
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 60)
+    print(" [STAGE 1] Data Preprocessing & Sanitization (Gauri's Module)")
+    print("=" * 60)
+
+    if not os.path.exists(args.raw_data) and not os.path.exists(args.processed_data):
+        print(f"[Stage 1] Ingest dataset not found. Generating calibrated Kerala tourism dataset...")
+        generate_kerala_tourism_dataset(start_year=2017, end_year=2024, save_path=args.raw_data)
+
+    # If processed_tourism.csv doesn't exist, create it from raw
+    if not os.path.exists(args.processed_data):
+        print(f"[Stage 1] Cleaning raw dataset from: {args.raw_data}")
+        clean_tourism_data(
+            input_path=args.raw_data,
+            output_path=args.processed_data,
+            impute_missing=True,
+        )
+    else:
+        print(f"[Stage 1] Verified existing cleaned dataset at: {args.processed_data}")
+
+    # Load and preprocess features
+    df_raw = load_tourism_data(args.processed_data if os.path.exists(args.processed_data) else args.raw_data)
+    processed_df, scaled_features, scaler = preprocess_tourism_data(df_raw, scale_method="robust")
+    print(f"[Stage 1] Preprocessed {len(processed_df):,} records across {processed_df['District'].nunique()} districts.")
+    print(f"[Stage 1] Engineered features: {list(scaled_features.columns)}")
+
+    # -------------------------------------------------------------------------
+    # STAGE 2: MELISA'S PRIMARY OUTLIER DETECTION (ISOLATION FOREST)
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 60)
+    print(" [STAGE 2] Primary Outlier Detection - Isolation Forest (Melisa's Module)")
+    print("=" * 60)
+
+    if_df, if_detector = detect_outliers_isolation_forest(
+        data=args.processed_data,
+        contamination=args.contamination,
+        output_path=args.if_results,
+        verbose=True,
+    )
+    # Render Melisa's diagnostic visualizations
+    plot_isolation_forest_visualizations(
+        if_df,
+        save_path=os.path.join(args.results_dir, "isolation_forest_visualizations.png"),
+    )
+
+    # -------------------------------------------------------------------------
+    # STAGE 3: NIFA'S SECOND ALGORITHM (LOCAL OUTLIER FACTOR) & COMPARISON
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 60)
+    print(" [STAGE 3] Local Outlier Factor (LOF) & Comparative Evaluation (Nifa's Module)")
+    print("=" * 60)
+
+    lof_res = run_lof_detection(
+        data_path=args.processed_data,
+        output_path=args.lof_results,
+        n_neighbors=args.n_neighbors,
+        contamination=args.contamination,
+    )
+    lof_df = lof_res[0] if isinstance(lof_res, tuple) else lof_res
+
+    # Compare Isolation Forest (Melisa) vs Local Outlier Factor (Nifa)
+    merged_comp_df, comp_summary = compare_outlier_algorithms(
+        lof_df=lof_df,
+        if_df=if_df,
+    )
+
+    # Render Nifa's visual evaluation plots
+    plot_comparison_summary(
+        comp_summary,
+        save_path=os.path.join(args.results_dir, "outlier_comparison_summary.png"),
+    )
+
+    x_feat = next((c for c in ["Domestic_Tourists", "domestic"] if c in merged_comp_df.columns), None)
+    y_feat = next((c for c in ["Foreign_Tourists", "foreign"] if c in merged_comp_df.columns), None)
+    if not (x_feat and y_feat):
+        num_c = merged_comp_df.select_dtypes(include=[np.number]).columns.tolist()
+        x_feat = num_c[0] if num_c else merged_comp_df.columns[0]
+        y_feat = num_c[1] if len(num_c) > 1 else x_feat
+
+    plot_feature_scatter_comparison(
+        merged_comp_df,
+        x_col=x_feat,
+        y_col=y_feat,
+        save_path=os.path.join(args.results_dir, "feature_scatter_comparison.png"),
+    )
+
+    score_col_name = "lof_score" if "lof_score" in lof_df.columns else ("lof_anomaly_score" if "lof_anomaly_score" in lof_df.columns else lof_df.columns[-1])
+    plot_lof_score_distribution(
+        lof_df,
+        score_col=score_col_name,
+        save_path=os.path.join(args.results_dir, "lof_score_distribution.png"),
+    )
+
+    t_col = next((c for c in ["Date", "date", "Year", "year"] if c in merged_comp_df.columns), None)
+    m_col = next((c for c in ["Total_Tourists", "total", "domestic", "Domestic_Tourists"] if c in merged_comp_df.columns), None)
+    if t_col and m_col:
+        plot_temporal_outlier_trend(
+            merged_comp_df,
+            date_or_index_col=t_col,
+            metric_col=m_col,
+            save_path=os.path.join(args.results_dir, "temporal_outlier_trend.png"),
         )
 
-    print(f"\n[Step 1] Ingesting dataset from: {args.data}")
-    raw_df = load_tourism_data(args.data)
-    print(f"         Loaded {len(raw_df):,} records across {raw_df['District'].nunique()} districts.")
+    # -------------------------------------------------------------------------
+    # STAGE 4: MULTI-MODEL ENSEMBLE CONSENSUS & DISTRICT PROFILING
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 60)
+    print(" [STAGE 4] Multi-Model Ensemble Consensus & District Profiling")
+    print("=" * 60)
 
-    # Step 2: Preprocessing and feature engineering
-    print("\n[Step 2] Executing preprocessing, temporal metrics, and feature scaling...")
-    processed_df, scaled_features, scaler = preprocess_tourism_data(raw_df, scale_method="robust")
-    print(f"         Engineered {scaled_features.shape[1]} features for multivariate anomaly analysis.")
-
-    # Step 3: Outlier Detection
-    print("\n[Step 3] Running statistical and machine learning outlier detectors:")
-    print("         - Statistical: Z-Score, Modified Z-Score (MAD), Global & District IQR")
-    print("         - Machine Learning: Isolation Forest, LOF, One-Class SVM, Elliptic Envelope, DBSCAN")
-    print(f"         - Ensemble: Consensus voting (threshold >= {args.consensus} models)")
-
-    results_df, models = run_all_detectors(
+    multi_results, ml_models = run_all_detectors(
         processed_df,
         scaled_features,
         contamination=args.contamination,
-        min_consensus=args.consensus,
+        min_consensus=2,
     )
 
-    # Step 4: Anomaly Categorization & Profiling
-    print("\n[Step 4] Categorizing detected anomalies & synthesizing profiles...")
-    categorized_df = categorize_anomalies(results_df, outlier_col="Ensemble_Outlier")
+    categorized_df = categorize_anomalies(multi_results, outlier_col="Ensemble_Outlier")
     summary_df = summarize_district_anomalies(categorized_df, outlier_col="Ensemble_Outlier")
     similarity_matrix = compute_model_agreement(categorized_df)
 
@@ -236,10 +375,7 @@ def main():
         ground_truth_col="Ground_Truth_Anomaly" if "Ground_Truth_Anomaly" in categorized_df.columns else None,
     )
 
-    # Step 5: Save Tabular Results
-    os.makedirs(args.results_dir, exist_ok=True)
-    anomalies_only = categorized_df[categorized_df["Ensemble_Outlier"] == 1]
-
+    # Save summary tables
     anomalies_csv = os.path.join(args.results_dir, "detected_anomalies.csv")
     categorized_df.to_csv(anomalies_csv, index=False)
 
@@ -249,13 +385,13 @@ def main():
     agreement_csv = os.path.join(args.results_dir, "model_agreement_matrix.csv")
     similarity_matrix.to_csv(agreement_csv)
 
-    print(f"\n[Step 5] Tabular outputs saved:")
-    print(f"         - Detailed predictions: {anomalies_csv}")
-    print(f"         - District summary:     {district_summary_csv}")
-    print(f"         - Model agreement:      {agreement_csv}")
+    # -------------------------------------------------------------------------
+    # STAGE 5: UNIFIED VISUALIZATION SUITE
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 60)
+    print(" [STAGE 5] Rendering Unified Visual Analytics Suite")
+    print("=" * 60)
 
-    # Step 6: Generate Visualizations
-    print(f"\n[Step 6] Rendering high-resolution analytics charts to '{args.results_dir}/'...")
     generate_all_visualizations(
         categorized_df,
         similarity_matrix,
@@ -263,33 +399,41 @@ def main():
         outlier_col="Ensemble_Outlier",
     )
 
-    # Step 7: Executive Report Synthesis
-    print(f"\n[Step 7] Generating executive analytical report...")
-    report_file = os.path.join(args.reports_dir, "outlier_analysis_summary.md")
-    generate_executive_report(summary_df, eval_results, categorized_df, report_file)
+    # -------------------------------------------------------------------------
+    # STAGE 6: COMPREHENSIVE EXECUTIVE REPORTING
+    # -------------------------------------------------------------------------
+    print("\n" + "=" * 60)
+    print(" [STAGE 6] Executive Synthesis & Reporting")
+    print("=" * 60)
 
-    # Terminal Summary Output
-    print("\n" + "=" * 70)
-    print("                      PIPELINE EXECUTION SUMMARY")
-    print("=" * 70)
-    n_flagged = categorized_df["Ensemble_Outlier"].sum()
-    pct_flagged = (n_flagged / len(categorized_df)) * 100
-    print(f"Total Observations Screened : {len(categorized_df):,}")
-    print(f"Ensemble Anomalies Flagged  : {n_flagged:,} ({pct_flagged:.2f}%)")
-    print(f"Top 3 Volatile Districts    : {', '.join(summary_df.head(3)['District'].tolist())}")
+    report_path = os.path.join(args.reports_dir, "outlier_analysis_summary.md")
+    generate_unified_executive_report(
+        summary_df=summary_df,
+        comparison_summary=comp_summary,
+        eval_results=eval_results,
+        anomalies_df=categorized_df,
+        report_path=report_path,
+    )
 
-    if "Model_Metrics" in eval_results and not eval_results["Model_Metrics"].empty:
-        print("\nModel Benchmark Scores (vs. Ground Truth):")
-        print(eval_results["Model_Metrics"].to_string(index=False))
-
-    print("\nVisualizations Generated:")
-    print("  [x] results/timeseries_anomalies.png")
-    print("  [x] results/multivariate_outliers_scatter.png")
-    print("  [x] results/district_boxplots.png")
-    print("  [x] results/model_agreement_heatmap.png")
-    print("  [x] results/seasonal_anomaly_matrix.png")
-    print(f"\nFull analytical report: {report_file}")
-    print("=" * 70)
+    # Final summary banner
+    print("\n" + "=" * 72)
+    print("              UNIFIED PIPELINE EXECUTION COMPLETED")
+    print("=" * 72)
+    print(f"Total Observations Screened     : {len(categorized_df):,}")
+    print(f"Isolation Forest Outliers (Melisa): {comp_summary.get('if_outliers_count', 0):,}")
+    print(f"Local Outlier Factor (Nifa)     : {comp_summary.get('lof_outliers_count', 0):,}")
+    print(f"Mutual Consensus Outliers       : {comp_summary.get('both_outliers_count', 0):,}")
+    print(f"Jaccard Agreement Index         : {comp_summary.get('jaccard_similarity', 0.0):.4f}")
+    print(f"Overall Concordance Rate        : {comp_summary.get('concordance_rate_pct', 0.0):.2f}%")
+    print(f"\nDeliverables Generated:")
+    print(f"  [x] Gauri's Dataset:          {args.processed_data}")
+    print(f"  [x] Melisa's IF Output:       {args.if_results}")
+    print(f"  [x] Nifa's LOF Output:        {args.lof_results}")
+    print(f"  [x] District Anomaly Summary: {district_summary_csv}")
+    print(f"  [x] Model Agreement Matrix:   {agreement_csv}")
+    print(f"  [x] Full Executive Report:    {report_path}")
+    print(f"  [x] Complete Plot Suite:      results/*.png (8 analytical charts)")
+    print("=" * 72 + "\n")
 
 
 if __name__ == "__main__":
