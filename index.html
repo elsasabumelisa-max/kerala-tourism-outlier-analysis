@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kerala Tourism Trend Outlier Analysis | Executive Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .kerala-gradient { background: linear-gradient(135deg, #064e3b 0%, #0f766e 50%, #0369a1 100%); }
+    .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03); }
+    .tab-active { border-bottom: 3px solid #0f766e; color: #0f766e; font-weight: 700; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP HERO NAVBAR -->
+  <header class="kerala-gradient text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="bg-emerald-400/20 text-emerald-200 border border-emerald-400/30 text-xs px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">
+              Data Mining Group Project
+            </span>
+            <span class="text-xs text-emerald-100/70">14 Administrative Districts of Kerala</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Kerala Tourism Trend Outlier Analysis
+          </h1>
+          <p class="text-emerald-100/90 text-sm mt-0.5">
+            Multi-Paradigm Anomaly Detection & Comparative Evaluation Framework
+          </p>
+        </div>
+
+        <!-- TEAM COLLABORATOR CHIPS -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
+            <span class="text-emerald-200 font-semibold">Gauri:</span> Preprocessing & EDA
+          </div>
+          <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
+            <span class="text-cyan-200 font-semibold">Melisa:</span> Isolation Forest (Lead)
+          </div>
+          <div class="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/15">
+            <span class="text-amber-200 font-semibold">Nifa:</span> LOF & Evaluation
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- KPI STATS CARDS -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <!-- Card 1 -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Total Records</div>
+        <div class="text-2xl font-black text-slate-800 mt-1">70</div>
+        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+          <i class="fa-regular fa-calendar text-emerald-600"></i> 14 Districts × 5 Yrs
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Concordance Rate</div>
+        <div class="text-2xl font-black text-emerald-600 mt-1">91.43%</div>
+        <div class="text-xs text-emerald-700 mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-check-double"></i> 64/70 Agreed Inliers
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">IF Outliers (Melisa)</div>
+        <div class="text-2xl font-black text-blue-600 mt-1">4</div>
+        <div class="text-xs text-blue-700 mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-tree"></i> 5.71% Detection Rate
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">LOF Outliers (Nifa)</div>
+        <div class="text-2xl font-black text-amber-600 mt-1">4</div>
+        <div class="text-xs text-amber-700 mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-circle-nodes"></i> k=20 Neighbors
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Consensus Outlier</div>
+        <div class="text-2xl font-black text-rose-600 mt-1">1</div>
+        <div class="text-xs text-rose-700 mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-bullseye"></i> Ernakulam (2019)
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 card-shadow">
+        <div class="text-slate-500 text-xs font-medium uppercase tracking-wider">Jaccard Similarity</div>
+        <div class="text-2xl font-black text-indigo-600 mt-1">0.1429</div>
+        <div class="text-xs text-indigo-700 mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-chart-pie"></i> Tree vs Density
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm mb-8 overflow-hidden">
+      <div class="flex border-b border-slate-200 overflow-x-auto text-sm font-medium">
+        <button onclick="switchTab('overview')" id="tab-overview" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap tab-active">
+          <i class="fa-solid fa-house text-emerald-600"></i> Executive Overview
+        </button>
+        <button onclick="switchTab('comparison')" id="tab-comparison" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-code-compare text-indigo-600"></i> Model Comparison (IF vs LOF)
+        </button>
+        <button onclick="switchTab('outliers-table')" id="tab-outliers-table" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-table-list text-rose-600"></i> Detected Outliers
+        </button>
+        <button onclick="switchTab('district-vulnerability')" id="tab-district-vulnerability" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-map-location-dot text-amber-600"></i> District Vulnerability
+        </button>
+        <button onclick="switchTab('gallery')" id="tab-gallery" class="px-5 py-3.5 border-b-2 border-transparent hover:text-emerald-700 flex items-center gap-2 whitespace-nowrap text-slate-600">
+          <i class="fa-solid fa-chart-line text-cyan-600"></i> Visual Analytics Gallery
+        </button>
+      </div>
+
+      <!-- TAB 1: EXECUTIVE OVERVIEW -->
+      <div id="content-overview" class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-6">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+              <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-emerald-600"></i> Domain Context: What Outliers Mean in Kerala Tourism
+              </h2>
+              <p class="text-slate-600 leading-relaxed text-sm">
+                In this data mining study, an <strong>outlier is an unusual observation or significant trend deviation, NOT a data collection error</strong>. 
+                Tourism arrivals in Kerala are strongly influenced by the South-West Monsoon, backwater geography, mountain topography (Western Ghats), and major socio-cultural events:
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
+                <div class="bg-rose-50 border border-rose-200/70 p-3 rounded-lg">
+                  <div class="font-bold text-rose-900 flex items-center gap-1.5 mb-1">
+                    <i class="fa-solid fa-cloud-showers-heavy"></i> 2018 Floods
+                  </div>
+                  <p class="text-rose-800">Torrential rain collapse in Alappuzha & Idukki (-85% drop).</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200/70 p-3 rounded-lg">
+                  <div class="font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+                    <i class="fa-solid fa-virus"></i> COVID-19 Shock
+                  </div>
+                  <p class="text-amber-800">Extended zero foreign arrivals and severe domestic lockdowns.</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200/70 p-3 rounded-lg">
+                  <div class="font-bold text-emerald-900 flex items-center gap-1.5 mb-1">
+                    <i class="fa-solid fa-masks-theater"></i> Festive Super-Surges
+                  </div>
+                  <p class="text-emerald-800">Thrissur Pooram & Onam peaks exceeding 2.4× baseline.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- CORE FINDINGS -->
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+              <h2 class="text-lg font-bold text-slate-900 mb-3">Key Project Findings</h2>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-start gap-2.5">
+                  <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                  <div>
+                    <strong>Mutual Consensus on 2019 Ernakulam:</strong> Both Isolation Forest and Local Outlier Factor simultaneously flagged <strong>Ernakulam in 2019</strong> (4.58M total tourists) as the single highest confidence anomaly in Kerala's modern tourism history.
+                  </div>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                  <div>
+                    <strong>Algorithm Complementarity:</strong> Isolation Forest (Melisa) effectively isolated macro-scale volume spikes (Ernakulam 2022-2023 domestic surges), while Local Outlier Factor (Nifa) successfully isolated density variations in Alappuzha during the 2017-2019 flood-rebuilding cycle.
+                  </div>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                  <div>
+                    <strong>91.43% Baseline Agreement:</strong> 64 out of 70 district-year observations showed unified agreement as inliers between tree-partitioning and density-clustering paradigms.
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- SIDEBAR: TEAM MEMBER RESPONSIBILITIES -->
+          <div class="space-y-4">
+            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+              <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Project Modules</h3>
+              <div class="space-y-3 text-xs">
+                <div class="p-3 rounded-lg bg-emerald-50/70 border border-emerald-100">
+                  <div class="font-bold text-emerald-900 mb-0.5">Gauri — Preprocessing</div>
+                  <p class="text-emerald-800">Dynamic column detection, missing value imputation, text sanitization, canonical dataset output.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-blue-50/70 border border-blue-100">
+                  <div class="font-bold text-blue-900 mb-0.5">Melisa — Isolation Forest</div>
+                  <p class="text-blue-800">Primary unsupervised detection algorithm, configurable contamination, anomaly score derivation.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-amber-50/70 border border-amber-100">
+                  <div class="font-bold text-amber-900 mb-0.5">Nifa — LOF & Evaluation</div>
+                  <p class="text-amber-800">Local Outlier Factor (k=20), Jaccard concordance evaluation, metric visualizations.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-slate-900 text-white rounded-xl p-5 shadow-sm">
+              <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">CLI Execution</div>
+              <p class="text-xs text-slate-300 mb-3">Run the master orchestrator in PowerShell or Bash:</p>
+              <code class="block bg-slate-800 text-emerald-400 p-2.5 rounded font-mono text-xs">
+                py main.py --contamination 0.05
+              </code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: MODEL COMPARISON -->
+      <div id="content-comparison" class="p-6 hidden">
+        <h2 class="text-xl font-bold text-slate-900 mb-2">Model Comparison: Isolation Forest vs. Local Outlier Factor</h2>
+        <p class="text-sm text-slate-600 mb-6">
+          Evaluation methodology: Because this is an unsupervised task without ground-truth labels, supervised metrics (Precision, Recall, F1) are invalid. We evaluate algorithmic concordance, Jaccard overlap, and contingency distribution.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-chart-column text-indigo-600"></i> Detection Overlap Breakdown
+            </h3>
+            <img src="results/outlier_comparison_summary.png" alt="Comparison Summary" class="rounded-lg border border-slate-100 w-full hover:scale-105 transition-transform duration-200">
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-shapes text-emerald-600"></i> Bivariate Comparison Scatter
+            </h3>
+            <img src="results/feature_scatter_comparison.png" alt="Feature Scatter Comparison" class="rounded-lg border border-slate-100 w-full hover:scale-105 transition-transform duration-200">
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+          <h3 class="font-bold text-slate-900 mb-3">Algorithm Contingency Matrix</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 text-sm">
+              <thead class="bg-slate-100">
+                <tr>
+                  <th class="px-4 py-2.5 text-left font-semibold text-slate-700">Category</th>
+                  <th class="px-4 py-2.5 text-center font-semibold text-slate-700">Count</th>
+                  <th class="px-4 py-2.5 text-center font-semibold text-slate-700">% of Data</th>
+                  <th class="px-4 py-2.5 text-left font-semibold text-slate-700">Algorithmic Interpretation</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                <tr>
+                  <td class="px-4 py-3 font-medium text-emerald-700 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Both Agreed Inlier
+                  </td>
+                  <td class="px-4 py-3 text-center font-bold">63</td>
+                  <td class="px-4 py-3 text-center">90.00%</td>
+                  <td class="px-4 py-3 text-slate-600">Normal seasonal tourist footfall across stable districts.</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-medium text-purple-700 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span> Mutual Consensus Outlier
+                  </td>
+                  <td class="px-4 py-3 text-center font-bold">1</td>
+                  <td class="px-4 py-3 text-center">1.43%</td>
+                  <td class="px-4 py-3 text-slate-600">Ernakulam (2019): Extreme volume spike validated by both tree-depth and local density.</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-medium text-blue-700 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Isolation Forest Only
+                  </td>
+                  <td class="px-4 py-3 text-center font-bold">3</td>
+                  <td class="px-4 py-3 text-center">4.29%</td>
+                  <td class="px-4 py-3 text-slate-600">Ernakulam 2022/2023 & TVM 2017: Extreme global scale volumes across the state.</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-medium text-amber-700 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> LOF Only
+                  </td>
+                  <td class="px-4 py-3 text-center font-bold">3</td>
+                  <td class="px-4 py-3 text-center">4.29%</td>
+                  <td class="px-4 py-3 text-slate-600">Alappuzha 2017/2018/2019: Disproportionate foreign ratio & 2018 flood isolation.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: DETECTED OUTLIERS TABLE -->
+      <div id="content-outliers-table" class="p-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Detected Outlier Records</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Filter observations flagged by Isolation Forest or Local Outlier Factor</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="filter-input" onkeyup="filterTable()" placeholder="Search district or year..." class="border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="min-w-full divide-y divide-slate-200 text-xs" id="outliers-data-table">
+            <thead class="bg-slate-100 font-semibold text-slate-700">
+              <tr>
+                <th class="px-3.5 py-2.5 text-left">Year</th>
+                <th class="px-3.5 py-2.5 text-left">District</th>
+                <th class="px-3.5 py-2.5 text-right">Domestic</th>
+                <th class="px-3.5 py-2.5 text-right">Foreign</th>
+                <th class="px-3.5 py-2.5 text-right">Total Footfalls</th>
+                <th class="px-3.5 py-2.5 text-right">Foreign Ratio</th>
+                <th class="px-3.5 py-2.5 text-center">IF Outlier (Melisa)</th>
+                <th class="px-3.5 py-2.5 text-center">LOF Outlier (Nifa)</th>
+                <th class="px-3.5 py-2.5 text-left">Consensus Classification</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 bg-white">
+              <!-- Outlier Row 1 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2019</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Ernakulam</td>
+                <td class="px-3.5 py-2.5 text-right">4,060,134</td>
+                <td class="px-3.5 py-2.5 text-right">522,232</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">4,582,366</td>
+                <td class="px-3.5 py-2.5 text-right">11.40%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-purple-100 text-purple-800 px-2.5 py-1 rounded-full font-bold">Both (Consensus Outlier)</span></td>
+              </tr>
+              <!-- Outlier Row 2 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2023</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Ernakulam</td>
+                <td class="px-3.5 py-2.5 text-right">4,487,930</td>
+                <td class="px-3.5 py-2.5 text-right">279,904</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">4,767,834</td>
+                <td class="px-3.5 py-2.5 text-right">5.87%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">Isolation Forest Only</span></td>
+              </tr>
+              <!-- Outlier Row 3 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2022</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Ernakulam</td>
+                <td class="px-3.5 py-2.5 text-right">4,048,679</td>
+                <td class="px-3.5 py-2.5 text-right">186,290</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">4,234,969</td>
+                <td class="px-3.5 py-2.5 text-right">4.40%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">Isolation Forest Only</span></td>
+              </tr>
+              <!-- Outlier Row 4 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2017</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Thiruvananthapuram</td>
+                <td class="px-3.5 py-2.5 text-right">2,505,333</td>
+                <td class="px-3.5 py-2.5 text-right">420,719</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">2,926,052</td>
+                <td class="px-3.5 py-2.5 text-right">14.38%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-blue-100 text-blue-800 px-2.5 py-1 rounded-full font-bold">Isolation Forest Only</span></td>
+              </tr>
+              <!-- Outlier Row 5 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2018</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Alappuzha</td>
+                <td class="px-3.5 py-2.5 text-right">511,490</td>
+                <td class="px-3.5 py-2.5 text-right">95,522</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">607,012</td>
+                <td class="px-3.5 py-2.5 text-right">15.74%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold">LOF Only (Flood Shock)</span></td>
+              </tr>
+              <!-- Outlier Row 6 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2017</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Alappuzha</td>
+                <td class="px-3.5 py-2.5 text-right">433,456</td>
+                <td class="px-3.5 py-2.5 text-right">75,037</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">508,493</td>
+                <td class="px-3.5 py-2.5 text-right">14.76%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold">LOF Only</span></td>
+              </tr>
+              <!-- Outlier Row 7 -->
+              <tr class="hover:bg-slate-50">
+                <td class="px-3.5 py-2.5 font-bold">2019</td>
+                <td class="px-3.5 py-2.5 font-semibold text-slate-900">Alappuzha</td>
+                <td class="px-3.5 py-2.5 text-right">677,958</td>
+                <td class="px-3.5 py-2.5 text-right">116,228</td>
+                <td class="px-3.5 py-2.5 text-right font-bold text-slate-900">794,186</td>
+                <td class="px-3.5 py-2.5 text-right">14.63%</td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded">0</span></td>
+                <td class="px-3.5 py-2.5 text-center"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">1</span></td>
+                <td class="px-3.5 py-2.5"><span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-bold">LOF Only</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: DISTRICT VULNERABILITY -->
+      <div id="content-district-vulnerability" class="p-6 hidden">
+        <h2 class="text-xl font-bold text-slate-900 mb-2">District Vulnerability Ranking</h2>
+        <p class="text-sm text-slate-600 mb-6">
+          Aggregated sensitivity to external volume shocks, natural disasters, and festival surges across all 14 districts of Kerala.
+        </p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-3">District Arrival Fences & Boxplots</h3>
+            <img src="results/district_boxplots.png" alt="District Boxplots" class="rounded-lg border border-slate-100 w-full hover:scale-105 transition-transform duration-200">
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-3">District Anomaly Summary</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-slate-200 text-xs">
+                <thead class="bg-slate-100">
+                  <tr>
+                    <th class="px-3 py-2 text-left font-semibold">District</th>
+                    <th class="px-3 py-2 text-center font-semibold">Records</th>
+                    <th class="px-3 py-2 text-center font-semibold">Anomalies</th>
+                    <th class="px-3 py-2 text-center font-semibold">Anomaly Rate</th>
+                    <th class="px-3 py-2 text-left font-semibold">Primary Driver</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  <tr class="bg-rose-50/50">
+                    <td class="px-3 py-2.5 font-bold text-slate-900">Ernakulam</td>
+                    <td class="px-3 py-2.5 text-center">5</td>
+                    <td class="px-3 py-2.5 text-center font-bold text-rose-700">5</td>
+                    <td class="px-3 py-2.5 text-center font-bold text-rose-700">100.0%</td>
+                    <td class="px-3 py-2.5 text-slate-600">Biennale & Business Gateway</td>
+                  </tr>
+                  <tr class="bg-amber-50/50">
+                    <td class="px-3 py-2.5 font-bold text-slate-900">Thiruvananthapuram</td>
+                    <td class="px-3 py-2.5 text-center">5</td>
+                    <td class="px-3 py-2.5 text-center font-bold text-amber-700">2</td>
+                    <td class="px-3 py-2.5 text-center font-bold text-amber-700">40.0%</td>
+                    <td class="px-3 py-2.5 text-slate-600">International Beach Hub</td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2.5 font-bold text-slate-900">Pathanamthitta</td>
+                    <td class="px-3 py-2.5 text-center">5</td>
+                    <td class="px-3 py-2.5 text-center">1</td>
+                    <td class="px-3 py-2.5 text-center">20.0%</td>
+                    <td class="px-3 py-2.5 text-slate-600">Sabarimala Pilgrimage</td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2.5 font-bold text-slate-900">Thrissur</td>
+                    <td class="px-3 py-2.5 text-center">5</td>
+                    <td class="px-3 py-2.5 text-center">1</td>
+                    <td class="px-3 py-2.5 text-center">20.0%</td>
+                    <td class="px-3 py-2.5 text-slate-600">Thrissur Pooram Festival</td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2.5 font-bold text-slate-900">Idukki</td>
+                    <td class="px-3 py-2.5 text-center">5</td>
+                    <td class="px-3 py-2.5 text-center">1</td>
+                    <td class="px-3 py-2.5 text-center">20.0%</td>
+                    <td class="px-3 py-2.5 text-slate-600">Munnar Hill Station</td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2.5 font-bold text-slate-900">Alappuzha</td>
+                    <td class="px-3 py-2.5 text-center">5</td>
+                    <td class="px-3 py-2.5 text-center">1</td>
+                    <td class="px-3 py-2.5 text-center">20.0%</td>
+                    <td class="px-3 py-2.5 text-slate-600">Backwater / Flood Shocks</td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2.5 text-slate-500" colspan="5">Remaining 8 Districts (Kollam, Kasaragod, Kannur, Kottayam, Palakkad, Malappuram, Kozhikode, Wayanad): Stable Baseline (0% Anomaly Rate).</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: VISUAL ANALYTICS GALLERY -->
+      <div id="content-gallery" class="p-6 hidden">
+        <h2 class="text-xl font-bold text-slate-900 mb-2">Visual Analytics Gallery</h2>
+        <p class="text-sm text-slate-600 mb-6">
+          High-resolution charts generated across all pipeline stages by Melisa, Nifa, and the team.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Chart 1 -->
+          <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">1. Isolation Forest Diagnostic Suite</h3>
+            <img src="results/isolation_forest_visualizations.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
+            <p class="text-[11px] text-slate-500 mt-2">Melisa's 4-panel diagnostic scatter, ratio, timeline, and score histogram.</p>
+          </div>
+
+          <!-- Chart 2 -->
+          <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">2. IF vs. LOF Comparison Bar Chart</h3>
+            <img src="results/outlier_comparison_summary.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
+            <p class="text-[11px] text-slate-500 mt-2">Nifa's comparative breakdown of detection rates, consensus, and exclusive anomalies.</p>
+          </div>
+
+          <!-- Chart 3 -->
+          <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">3. LOF Anomaly Score Distribution</h3>
+            <img src="results/lof_score_distribution.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
+            <p class="text-[11px] text-slate-500 mt-2">Histogram of local reachability densities with outlier threshold fence.</p>
+          </div>
+
+          <!-- Chart 4 -->
+          <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">4. Temporal Outlier Trend</h3>
+            <img src="results/temporal_outlier_trend.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
+            <p class="text-[11px] text-slate-500 mt-2">Longitudinal footfalls tracking when algorithms flagged anomalous shocks.</p>
+          </div>
+
+          <!-- Chart 5 -->
+          <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">5. Multi-District Arrival Trajectories</h3>
+            <img src="results/timeseries_anomalies.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
+            <p class="text-[11px] text-slate-500 mt-2">District-level trajectories with overlaid anomaly flags.</p>
+          </div>
+
+          <!-- Chart 6 -->
+          <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <h3 class="text-xs font-bold text-slate-800 mb-2">6. Model Agreement Heatmap</h3>
+            <img src="results/model_agreement_heatmap.png" class="rounded border border-slate-100 w-full cursor-pointer hover:opacity-95" onclick="openModal(this.src)">
+            <p class="text-[11px] text-slate-500 mt-2">Pairwise Jaccard correlation matrix across all detection algorithms.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- IMAGE LIGHTBOX MODAL -->
+  <div id="image-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4" onclick="closeModal()">
+    <div class="max-w-5xl max-h-[90vh] bg-white rounded-xl p-2 shadow-2xl relative" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute -top-3 -right-3 bg-slate-900 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-slate-700">
+        &times;
+      </button>
+      <img id="modal-img" src="" class="max-h-[85vh] rounded object-contain">
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 mt-auto text-xs">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div>
+        <span class="font-bold text-white">Kerala Tourism Trend Outlier Analysis</span> — Group Project (Gauri, Melisa, Nifa)
+      </div>
+      <div>
+        Built with Python, Scikit-Learn, Pandas & Tailwind CSS
+      </div>
+    </div>
+  </footer>
+
+  <!-- INTERACTIVE JS -->
+  <script>
+    function switchTab(tabId) {
+      // Hide all tabs
+      const tabs = ['overview', 'comparison', 'outliers-table', 'district-vulnerability', 'gallery'];
+      tabs.forEach(t => {
+        document.getElementById('content-' + t).classList.add('hidden');
+        document.getElementById('tab-' + t).classList.remove('tab-active');
+        document.getElementById('tab-' + t).classList.add('text-slate-600');
+      });
+
+      // Show selected tab
+      document.getElementById('content-' + tabId).classList.remove('hidden');
+      document.getElementById('tab-' + tabId).classList.add('tab-active');
+      document.getElementById('tab-' + tabId).classList.remove('text-slate-600');
+    }
+
+    function filterTable() {
+      const input = document.getElementById('filter-input').value.toLowerCase();
+      const table = document.getElementById('outliers-data-table');
+      const trs = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+      for (let i = 0; i < trs.length; i++) {
+        const text = trs[i].textContent.toLowerCase();
+        trs[i].style.display = text.includes(input) ? '' : 'none';
+      }
+    }
+
+    function openModal(src) {
+      document.getElementById('modal-img').src = src;
+      document.getElementById('image-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('image-modal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
